@@ -84,6 +84,22 @@ Pinging a group of systems
 @("addc12c.ad3.ucdavis.edu","addc14c.ad3.ucdavis.edu","addc15c.ad3.ucdavis.edu") | Foreach-Object { $pingStatus = Test-Connection $_ -Count 1 -Quiet; "$_ $pingStatus" }
 ```
 
+### Checking Profile Settings
+
+View command line colors
+```powershell
+Get-PSReadLineOption
+```
+View the current Prompt code block
+```powershell
+(Get-Command Prompt).ScriptBlock
+```
+View host UI settings
+```powershell
+$host.UI.RawUI
+```
+
+
 
 
 
