@@ -29,7 +29,7 @@ Notepad $PROFILE
 
 ### Profile file items
 
-Set Command Line Colors
+Set command line colors
 ```powershell
 Set-PSReadLineOption -Colors @{
 
@@ -53,8 +53,36 @@ Set-PSReadLineOption -Colors @{
   "ListPredictionSelected" = "#7F7F7F" # UCD Black 50%
   
 }
-```
 
+```
+Set foreground color in console
+```powershell
+$Host.UI.RawUI.ForegroundColor = "DarkCyan";
+```
+Set the Window title
+```powershell
+$host.UI.RawUI.WindowTitle = ("Happy " + (Get-Date).DayOfWeek + "!");
+```
+Open default browser to UCD Status Page and other helpful sites
+```powershell
+start-process "https://status.ucdavis.edu";
+start-process "https://servicehub.ucdavis.edu";
+start-process "https://directory.ucdavis.edu";
+#start-process "https://status.office365.com/";
+#start-process "https://status.box.com/";
+```
+Changing the Prompt
+```powershell
+function prompt { "Wands at the ready coders!`n > "}
+```
+Changing the Prompt to display user and system names
+```powershell
+function prompt {"$env:USERDOMAIN\$env:USERNAME on $($env:COMPUTERNAME.ToString().ToLower())`n> "}
+```
+Pinging a group of systems
+```powershell
+@("addc12c.ad3.ucdavis.edu","addc14c.ad3.ucdavis.edu","addc15c.ad3.ucdavis.edu") | Foreach-Object { $pingStatus = Test-Connection $_ -Count 1 -Quiet; "$_ $pingStatus" }
+```
 
 
 
