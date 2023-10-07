@@ -26,6 +26,12 @@ Set-PSReadLineOption -Colors @{
   
 }
 
+# UCD Colors
+# https://marketingtoolbox.ucdavis.edu/brand-guide/colors
+
+# PSReadLineOptions can use the Console Color options as well
+#"Error" = [ConsoleColor]::DarkRed
+
 # Set Foreground Color in Console
 $Host.UI.RawUI.ForegroundColor = "DarkCyan";
 
