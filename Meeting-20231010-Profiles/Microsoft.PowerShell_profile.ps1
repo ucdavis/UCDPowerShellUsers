@@ -48,8 +48,10 @@ $host.UI.RawUI.WindowTitle = ("Happy " + (Get-Date).DayOfWeek + "!");
 # Changing the Prompt
 function prompt { "Wands at the ready coders!`n > "}
 
-# Changing the Prompt to Display User and System Names
-function prompt {"$env:USERDOMAIN\$env:USERNAME on $($env:COMPUTERNAME.ToString().ToLower())`n> "}
+# Changing Prompt to the Computer Name and Current Directory Path
+function prompt{
+  "PS [$env:computername] $(Get-Location)>";
+}
 
 # Pinging a Group Of Systems 
 @("addc12c.ad3.ucdavis.edu","addc14c.ad3.ucdavis.edu","addc15c.ad3.ucdavis.edu") | Foreach-Object { $pingStatus = Test-Connection $_ -Count 1 -Quiet; "$_ $pingStatus" }

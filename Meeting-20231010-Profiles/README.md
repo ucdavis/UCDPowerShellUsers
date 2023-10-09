@@ -48,9 +48,9 @@ Set-PSReadLineOption -Colors @{
   "Type" = "#FFFFFF" # White
   "Number" = "#FFDC00" # UCD Sunflower
   "Member" = "#FFF2CC" # UCD Gold 20%
-  "InlinePrediction" = "#333333" # UCD Black 80%
-  "ListPrediction" = "#FFD24C" # UCD Gold 70%
-  "ListPredictionSelected" = "#7F7F7F" # UCD Black 50%
+  #"InlinePrediction" = "#333333" # UCD Black 80%
+  #"ListPrediction" = "#FFD24C" # UCD Gold 70%
+  #"ListPredictionSelected" = "#7F7F7F" # UCD Black 50%
   
 }
 
@@ -75,9 +75,11 @@ Changing the Prompt
 ```powershell
 function prompt { "Wands at the ready coders!`n > "}
 ```
-Changing the Prompt to display user and system names
+Changing Prompt to the Computer Name and Current Directory Path
 ```powershell
-function prompt {"$env:USERDOMAIN\$env:USERNAME on $($env:COMPUTERNAME.ToString().ToLower())`n> "}
+function prompt{
+  "PS [$env:computername] $(Get-Location)>";
+}
 ```
 Pinging a group of systems
 ```powershell
