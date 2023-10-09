@@ -83,6 +83,10 @@ Pinging a group of systems
 ```powershell
 @("addc12c.ad3.ucdavis.edu","addc14c.ad3.ucdavis.edu","addc15c.ad3.ucdavis.edu") | Foreach-Object { $pingStatus = Test-Connection $_ -Count 1 -Quiet; "$_ $pingStatus" }
 ```
+Change Location to the Desktop
+```powershell
+Set-Location ([Environment]::GetFolderPath("Desktop").ToString());
+```
 
 ### Checking Profile Settings
 

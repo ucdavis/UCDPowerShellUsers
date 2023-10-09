@@ -54,3 +54,6 @@ function prompt {"$env:USERDOMAIN\$env:USERNAME on $($env:COMPUTERNAME.ToString(
 # Pinging a Group Of Systems 
 @("addc12c.ad3.ucdavis.edu","addc14c.ad3.ucdavis.edu","addc15c.ad3.ucdavis.edu") | Foreach-Object { $pingStatus = Test-Connection $_ -Count 1 -Quiet; "$_ $pingStatus" }
 
+#Changing Current Directory to the Desktop
+Set-Location ([Environment]::GetFolderPath("Desktop").ToString());
+
