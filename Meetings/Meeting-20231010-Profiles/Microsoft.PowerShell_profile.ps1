@@ -53,8 +53,46 @@ function prompt{
   "PS [$env:computername] $(Get-Location)>";
 }
 
+function get-ucd-servers{
+
+  #Custom Reporting Object for Server Listing
+  $cstSrvRpt = new-object PSObject -Property (@{UCDServers=@(); Status=""});
+  $cstSrvRpt.Status = "";
+
+  #Array of Server OU DNs
+  $ServerOUs = $("OU=unit1,OU=MyUnits,OU=MyDepartment,DC=my,DC=college,DC=edu",
+                 "OU=unit2,OU=MyUnits,OU=MyDepartment,DC=my,DC=college,DC=edu",
+                 "OU=unit4,OU=MyUnits,OU=MyDepartment,DC=my,DC=college,DC=edu",
+                 "OU=unit6,OU=MyUnits,OU=MyDepartment,DC=my,DC=college,DC=edu",
+                 "OU=unit8,OU=MyUnits,OU=MyDepartment,DC=my,DC=college,DC=edu");
+
+  #Check Connection to Campus
+  if((Test-Connection -Ping -TargetName my.college.edu -Count 1 -TimeoutSeconds 1).Status -eq "Success")
+  {
+      #Import the Active Directory Module
+      Import-Module ActiveDirectory;
+
+      #Loop Through OUs and Get All AD Computers (Including the IPv4Address) and Add Them to Reporting Array
+      Foreach($srvrOU in $ServerOUs)
+      {
+          $cstSrvRpt.UCDServers += Get-ADComputer -Filter 'Enabled -eq $True' -SearchBase $srvrOU -SearchScope Subtree -Server my.college.edu -Properties IPv4Address | Select-Object -Property Name,DNSHostName,IPv4Address;
+      }
+  
+  }
+  else 
+  {
+      #Display Status of Failed Ping
+      $cstSrvRpt.Status = "Couldn't ping domain. Check your Campus connection!";
+      return $cstSrvRpt.Status;
+  }
+
+  #Display Server Report Array
+  return $cstSrvRpt.UCDServers;
+
+}#End of get-ucd-servers
+
 # Pinging a Group Of Systems 
-@("addc12c.ad3.ucdavis.edu","addc14c.ad3.ucdavis.edu","addc15c.ad3.ucdavis.edu") | Foreach-Object { $pingStatus = Test-Connection $_ -Count 1 -Quiet; "$_ $pingStatus" }
+@("dc12c.my.college.edu","dc14c.my.college.edu","dc15c.my.college.edu") | Foreach-Object { $pingStatus = Test-Connection $_ -Count 1 -Quiet; "$_ $pingStatus" }
 
 #Changing Current Directory to the Desktop
 Set-Location ([Environment]::GetFolderPath("Desktop").ToString());
