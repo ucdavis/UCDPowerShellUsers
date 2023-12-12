@@ -29,3 +29,21 @@ Get-Content -Tail 10 /var/log/forticlient/sslvpn.log
 #Creating Object from Linux Command Output
 $test = df -h
 $test[3]
+
+#What Happens When You Run
+$fwStatus = ufw status
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
