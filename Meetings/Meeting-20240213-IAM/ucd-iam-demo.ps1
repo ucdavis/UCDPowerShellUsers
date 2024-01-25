@@ -96,7 +96,7 @@ foreach($dpt in $cnfgSettings.Departments)
     [string]$rptFileName = "IAM-Dept-" +  $dpt.Dept_Code  + "-Payroll-Associations-" + (Get-Date).ToString("yyyy-MM-dd") + ".csv";
 
     #Export Custom Payroll Associations Listing for Dept Code
-    $arrCstPRAssociations | Select-Object -Property UserID,DisplayName,EmailAddress,Title,TitleCode,PositionType,PositionTypeCode,EmployeeClass,EmployeeClassDescription,AssociationStartDate | Export-Csv -Path .\$rptFileName -NoTypeInformation;
+    $arrCstPRAssociations | Select-Object -Property UserID,DisplayName,EmailAddress,Title,TitleCode,PositionType,PositionTypeCode,EmployeeClass,EmployeeClassDescription,AssociationStartDate,Department | Export-Csv -Path .\$rptFileName -NoTypeInformation;
 
 }#End of Departments Foreach Pulling IAM Payroll Associations
 #>
