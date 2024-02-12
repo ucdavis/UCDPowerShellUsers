@@ -1,7 +1,7 @@
 <#
     Title: ucd-iam-demo.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2024-01-24
+    Last Edit: 2024-02-12
 #>
 
 #Var for Config Settings
@@ -117,30 +117,58 @@ foreach($dpt in $cnfgSettings.Departments)
 #Var for URL of Individual's IAM Payroll Associations
 [string]$iam_url_indv_payroll = $cnfgSettings.IAM_Base_URL + "associations/pps/" + $cnfgSettings.IAM_MyID + "?key=" + $cnfgSettings.IAM_Key + "&v=1.0";
 
+#Var for URL of Individual's Online Directory Entry
+[string]$iam_url_indv_odr = $cnfgSettings.IAM_Base_URL + "associations/odr/" + $cnfgSettings.IAM_MyID + "?key=" + $cnfgSettings.IAM_Key + "&v=1.0";
+
+Write-Output " ";
+Write-Output "============== Basic Information =================";
+Write-Output " ";
 
 #Display Individual IAM Information
 (Invoke-RestMethod -ContentType "application/json" -Uri $iam_url_indv_basicinfo).responseData.results;
 
 Write-Output " ";
-Write-Output "===============================";
+Write-Output "============== Affiliations =================";
 Write-Output " ";
 
 #Display Individual IAM Associations
 (Invoke-RestMethod -ContentType "application/json" -Uri $iam_url_indv_affiliations).responseData.results;
 
 Write-Output " ";
-Write-Output "===============================";
+Write-Output "============== Contact Info =================";
 Write-Output " ";
 
 #Display Individual IAM Contact Information
 (Invoke-RestMethod -ContentType "application/json" -Uri $iam_url_indv_contact).responseData.results;
 
 Write-Output " ";
-Write-Output "===============================";
+Write-Output "============== Payroll Info ==================";
 Write-Output " ";
 
 #Display Individual IAM Payroll Associations
 (Invoke-RestMethod -ContentType "application/json" -Uri $iam_url_indv_payroll).responseData.results;
+
+
+Write-Output " ";
+Write-Output "============== Online Directory ==================";
+Write-Output " ";
+
+#Display Individual Online Directory Associations
+(Invoke-RestMethod -ContentType "application/json" -Uri $iam_url_indv_odr).responseData.results;
+
+#>
+
+
+
+<#
+#Var for Students by Major URL
+[string]$iam_url_students_major = $cnfgSettings.IAM_Base_URL + "associations/sis/search?key=" + $cnfgSettings.IAM_Key + "&v=1.0&majorCode=ECSI";
+
+#Display Students in a Major Code
+(Invoke-RestMethod -ContentType "application/json" -Uri $iam_url_students_major).responseData.results;
+#>
+
+
 
 
 #Information About Requesting Access to IAM
