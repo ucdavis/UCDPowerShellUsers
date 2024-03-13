@@ -1,4 +1,4 @@
-## Secret Management 
+## Secrets Management 
 
 ### Resource Links
 
