@@ -1,4 +1,4 @@
-## uInform API
+## uInform API Usage
 
 ### Resource Links
 
