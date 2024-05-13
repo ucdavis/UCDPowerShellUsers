@@ -35,6 +35,9 @@ Set-Secret -Name "Chiefs-QB" -Secret "Kermit Mahomes"
 #View Secret
 Get-Secret -Name "Niners-QB" -AsPlainText
 
+#View Secrets Info
+Get-SecretInfo -Name *
+
 #Storing Secrets Store Configuration General Password
 $credential = Get-Credential -UserName 'SecureStore'
 $securePasswordPath = 'C:\db\passwd.xml'

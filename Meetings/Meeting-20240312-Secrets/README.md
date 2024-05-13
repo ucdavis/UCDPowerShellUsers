@@ -45,6 +45,10 @@ View Secret
 ```powershell
 Get-Secret -Name "Niners-QB" -AsPlainText
 ```
+View Secrets Info
+```powershell
+Get-SecretInfo -Name *
+```
 Storing Secrets Store Configuration General Password
 ```powershell
 $credential = Get-Credential -UserName 'SecureStore'
