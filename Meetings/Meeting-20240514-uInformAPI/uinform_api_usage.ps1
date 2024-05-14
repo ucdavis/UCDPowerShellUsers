@@ -103,6 +103,7 @@ function Add-uInformAPIAD3ManagedGroup()
     return $rspObj.responseObject;
 }
 
+#Function for Getting AD3 Managed Group by Name
 function Get-uInformAPIAD3ManagedGroupByName()
 {
     Param
@@ -140,6 +141,7 @@ function Get-uInformAPIAD3ManagedGroupByName()
 
 }
 
+#Function for Getting AD3 Managed Group by Guid
 function Get-uInformAPIAD3ManagedGroupByGUID()
 {
     Param
@@ -177,6 +179,7 @@ function Get-uInformAPIAD3ManagedGroupByGUID()
 
 }
 
+#Function for Removing AD3 Managed Group
 function Remove-uInformAPIAD3ManagedGroup()
 {
     Param
@@ -212,6 +215,8 @@ function Remove-uInformAPIAD3ManagedGroup()
 
     return $rmvRqst.responseObject;
 }
+
+#Function for Getting Membership of AD3 Managed Group
 function Get-uInformAPIAD3ManagedGroupMembership()
 {
     Param
@@ -249,6 +254,7 @@ function Get-uInformAPIAD3ManagedGroupMembership()
 
 }
 
+#Function for Submitting an AD3 Managed Group Membership Change
 function Submit-uInformAPIAD3ManagedGroupMembershipChange()
 {
     Param
