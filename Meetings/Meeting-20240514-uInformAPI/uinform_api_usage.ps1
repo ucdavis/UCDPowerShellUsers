@@ -297,9 +297,40 @@ function Submit-uInformAPIAD3ManagedGroupMembershipChange()
     return $rspObj.responseObject;
 }
 
+function Get-uInformAPITrashCall()
+{
+    
+    #Var for Http Method
+    $method = "GET"
+
+    #Configure Request Signature
+    $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
+    $sig = $method + ":" + $timestamp + ":" + $uInformAPIInfo.public_key;
+    $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
+    $sha.Key = [System.Text.Encoding]::UTF8.Getbytes("KittensAreCute");
+    $enc = [Convert]::Tobase64String($sha.ComputeHash([System.Text.Encoding]::UTF8.Getbytes($sig)));
+
+    #Configure URL
+    $url = $uInformAPIInfo.url_base + "adusers/sam/dbunn";
+
+    #Configure Headers
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]";
+    $headers.Add('Accept','Application/Json')
+    $headers.Add('X-UTIMESTAMP', $timestamp)
+
+    #Create a Credential Object for HTTP Basic Auth
+    $p = $enc | ConvertTo-SecureString -asPlainText -Force
+    $credential = New-Object System.Management.Automation.PSCredential($uInformAPIInfo.public_key, $p)
+
+    #Make API request, selecting JSON properties from response
+    Invoke-WebRequest $url -Method $method -Headers $headers -Credential $credential -UseBasicParsing | Select-Object -ExpandProperty Headers | Format-List;
+
+}
+
+#Get-uInformAPITrashCall
 
 #Pull User Information
-#Get-uInformAPIAD3UserByUserID -UserID "dbunn";
+Get-uInformAPIAD3UserByUserID -UserID "dbunn";
 
 #Create a New AD3 Managed Group
 #Add-uInformAPIAD3ManagedGroup -GroupName "COE-JollyDevs" -GroupDisplayName "COE Jolly Devs" -GroupDiscription "The Jolly Developers of COE" -GroupMaxMembers 0;
@@ -308,7 +339,7 @@ function Submit-uInformAPIAD3ManagedGroupMembershipChange()
 #Get-uInformAPIAD3ManagedGroupByName -GroupName "COE-SunnyDevs";
 
 #Submit AD3 Managed Group Membership Change
-Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID "f3c79add-eae9-4112-873a-0708984a5c96" -MembershipAction "ADD" -MemberGUID "0a0a2344-613a-4b69-8778-8f5fb3427ef6";
+#Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d" -MembershipAction "REMOVE" -MemberGUID "0a0a2344-613a-4b69-8778-8f5fb3427ef6";
 
 #Pull AD3 Managed Group by GUID
 #Get-uInformAPIAD3ManagedGroupByGUID -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d";
