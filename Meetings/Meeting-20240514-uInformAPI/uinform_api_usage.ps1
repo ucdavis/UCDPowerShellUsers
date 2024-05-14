@@ -7,7 +7,7 @@
 #Custom Object for uInform API Information
 $global:uInformAPIInfo = new-object PSObject -Property (@{ public_key=""; private_key=""; url_base="";});
 
-#Load Public and Private Keys for uInform API Access. Run Something Like Get-SecretInfo -Name * to Unlock Vault for Non-Automated Work
+#Load Public and Private Keys for uInform API Access
 $uInformAPIInfo.public_key = Get-Secret -Name "uInformAPI-Pubkey" -AsPlainText -Vault UCDAccounts
 $uInformAPIInfo.private_key = Get-Secret -Name "uInformAPI-Pvtkey" -AsPlainText -Vault UCDAccounts
 $uInformAPIInfo.url_base = "https://ws.uinform.ucdavis.edu/";
@@ -24,6 +24,7 @@ function Get-uInformAPIAD3UserByUserID()
     #Var for Http Method
     $method = "GET"
 
+    #Configure Request Signature
     $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
     $sig = $method + ":" + $timestamp + ":" + $uInformAPIInfo.public_key;
     $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
@@ -38,7 +39,7 @@ function Get-uInformAPIAD3UserByUserID()
     $headers.Add('Accept','Application/Json')
     $headers.Add('X-UTIMESTAMP', $timestamp)
 
-    #Create a credential object for HTTP basic auth
+    #Create a Credential Object for HTTP Basic Auth
     $p = $enc | ConvertTo-SecureString -asPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($uInformAPIInfo.public_key, $p)
 
@@ -77,6 +78,7 @@ function Add-uInformAPIAD3ManagedGroup()
     #Var for Http Method
     $method = "POST"
 
+    #Configure Request Signature
     $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
     $sig = $method + ":" + $timestamp + ":" + $uInformAPIInfo.public_key;
     $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
@@ -91,7 +93,7 @@ function Add-uInformAPIAD3ManagedGroup()
     $headers.Add('Accept','Application/Json')
     $headers.Add('X-UTIMESTAMP', $timestamp)
 
-    #Create a credential object for HTTP basic auth
+    #Create a Credential Object for HTTP Basic Auth
     $p = $enc | ConvertTo-SecureString -asPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($uInformAPIInfo.public_key, $p)
 
@@ -112,6 +114,7 @@ function Get-uInformAPIAD3ManagedGroupByName()
     #Var for Http Method
     $method = "GET"
 
+    #Configure Request Signature
     $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
     $sig = $method + ":" + $timestamp + ":" + $uInformAPIInfo.public_key;
     $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
@@ -126,7 +129,7 @@ function Get-uInformAPIAD3ManagedGroupByName()
     $headers.Add('Accept','Application/Json')
     $headers.Add('X-UTIMESTAMP', $timestamp)
 
-    #Create a credential object for HTTP basic auth
+    #Create a Credential Object for HTTP Basic Auth
     $p = $enc | ConvertTo-SecureString -asPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($uInformAPIInfo.public_key, $p)
 
@@ -148,6 +151,7 @@ function Get-uInformAPIAD3ManagedGroupByGUID()
     #Var for Http Method
     $method = "GET"
 
+    #Configure Request Signature
     $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
     $sig = $method + ":" + $timestamp + ":" + $uInformAPIInfo.public_key;
     $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
@@ -162,7 +166,7 @@ function Get-uInformAPIAD3ManagedGroupByGUID()
     $headers.Add('Accept','Application/Json')
     $headers.Add('X-UTIMESTAMP', $timestamp)
 
-    #Create a credential object for HTTP basic auth
+    #Create a Credential Object for HTTP Basic Auth
     $p = $enc | ConvertTo-SecureString -asPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($uInformAPIInfo.public_key, $p)
 
@@ -184,6 +188,7 @@ function Remove-uInformAPIAD3ManagedGroup()
     #Var for Http Method
     $method = "DELETE"
 
+    #Configure Request Signature
     $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
     $sig = $method + ":" + $timestamp + ":" + $uInformAPIInfo.public_key;
     $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
@@ -198,7 +203,7 @@ function Remove-uInformAPIAD3ManagedGroup()
     $headers.Add('Accept','Application/Json')
     $headers.Add('X-UTIMESTAMP', $timestamp)
 
-    #Create a credential object for HTTP basic auth
+    #Create a Credential Object for HTTP Basic Auth
     $p = $enc | ConvertTo-SecureString -asPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($uInformAPIInfo.public_key, $p)
 
@@ -218,6 +223,7 @@ function Get-uInformAPIAD3ManagedGroupMembership()
     #Var for Http Method
     $method = "GET"
 
+    #Configure Request Signature
     $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
     $sig = $method + ":" + $timestamp + ":" + $uInformAPIInfo.public_key;
     $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
@@ -232,7 +238,7 @@ function Get-uInformAPIAD3ManagedGroupMembership()
     $headers.Add('Accept','Application/Json')
     $headers.Add('X-UTIMESTAMP', $timestamp)
 
-    #Create a credential object for HTTP basic auth
+    #Create a Credential Object for HTTP Basic Auth
     $p = $enc | ConvertTo-SecureString -asPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($uInformAPIInfo.public_key, $p)
 
@@ -266,6 +272,7 @@ function Submit-uInformAPIAD3ManagedGroupMembershipChange()
     #Var for Http Method
     $method = "POST"
 
+    #Configure Request Signature
     $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
     $sig = $method + ":" + $timestamp + ":" + $uInformAPIInfo.public_key;
     $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
@@ -280,7 +287,7 @@ function Submit-uInformAPIAD3ManagedGroupMembershipChange()
     $headers.Add('Accept','Application/Json')
     $headers.Add('X-UTIMESTAMP', $timestamp)
 
-    #Create a credential object for HTTP basic auth
+    #Create a Credential Object for HTTP Basic Auth
     $p = $enc | ConvertTo-SecureString -asPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($uInformAPIInfo.public_key, $p)
 
@@ -298,10 +305,10 @@ function Submit-uInformAPIAD3ManagedGroupMembershipChange()
 #Add-uInformAPIAD3ManagedGroup -GroupName "COE-JollyDevs" -GroupDisplayName "COE Jolly Devs" -GroupDiscription "The Jolly Developers of COE" -GroupMaxMembers 0;
 
 #Pull AD3 Managed Group by Name
-#Get-uInformAPIAD3ManagedGroupByName -GroupName "COE-JollyDevs";
+#Get-uInformAPIAD3ManagedGroupByName -GroupName "COE-SunnyDevs";
 
 #Submit AD3 Managed Group Membership Change
-#Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d" -MembershipAction "ADD" -MemberGUID "ad4ca617-85f5-4514-a61f-f0f9dd9f8b90";
+Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID "f3c79add-eae9-4112-873a-0708984a5c96" -MembershipAction "ADD" -MemberGUID "0a0a2344-613a-4b69-8778-8f5fb3427ef6";
 
 #Pull AD3 Managed Group by GUID
 #Get-uInformAPIAD3ManagedGroupByGUID -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d";
