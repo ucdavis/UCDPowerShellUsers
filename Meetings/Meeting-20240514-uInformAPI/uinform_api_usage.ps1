@@ -297,38 +297,6 @@ function Submit-uInformAPIAD3ManagedGroupMembershipChange()
     return $rspObj.responseObject;
 }
 
-function Get-uInformAPITrashCall()
-{
-    
-    #Var for Http Method
-    $method = "GET"
-
-    #Configure Request Signature
-    $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
-    $sig = $method + ":" + $timestamp + ":" + $uInformAPIInfo.public_key;
-    $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
-    $sha.Key = [System.Text.Encoding]::UTF8.Getbytes("KittensAreCute");
-    $enc = [Convert]::Tobase64String($sha.ComputeHash([System.Text.Encoding]::UTF8.Getbytes($sig)));
-
-    #Configure URL
-    $url = $uInformAPIInfo.url_base + "adusers/sam/dbunn";
-
-    #Configure Headers
-    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]";
-    $headers.Add('Accept','Application/Json')
-    $headers.Add('X-UTIMESTAMP', $timestamp)
-
-    #Create a Credential Object for HTTP Basic Auth
-    $p = $enc | ConvertTo-SecureString -asPlainText -Force
-    $credential = New-Object System.Management.Automation.PSCredential($uInformAPIInfo.public_key, $p)
-
-    #Make API request, selecting JSON properties from response
-    Invoke-WebRequest $url -Method $method -Headers $headers -Credential $credential -UseBasicParsing | Select-Object -ExpandProperty Headers | Format-List;
-
-}
-
-#Get-uInformAPITrashCall
-
 #Pull User Information
 Get-uInformAPIAD3UserByUserID -UserID "dbunn";
 
