@@ -1,7 +1,7 @@
 <#
     Title: uinform_api_usage.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2024-05-14
+    Last Edit: 2024-05-15
 #>
 
 #Custom Object for uInform API Information
@@ -86,7 +86,7 @@ function Add-uInformAPIAD3ManagedGroup()
     $enc = [Convert]::Tobase64String($sha.ComputeHash([System.Text.Encoding]::UTF8.Getbytes($sig)));
 
     #Configure URL
-    $url = $uInformAPIInfo.url_base + "ManagedGroups" + $userID;
+    $url = $uInformAPIInfo.url_base + "ManagedGroups";
 
     #Configure Headers
     $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]";
@@ -303,28 +303,31 @@ function Submit-uInformAPIAD3ManagedGroupMembershipChange()
     return $rspObj.responseObject;
 }
 
+#Stopping an Accidental Run
+exit;
+
 #Pull User Information
 Get-uInformAPIAD3UserByUserID -UserID "dbunn";
 
 #Create a New AD3 Managed Group
-#Add-uInformAPIAD3ManagedGroup -GroupName "COE-JollyDevs" -GroupDisplayName "COE Jolly Devs" -GroupDiscription "The Jolly Developers of COE" -GroupMaxMembers 0;
+Add-uInformAPIAD3ManagedGroup -GroupName "COE-JollyDevs" -GroupDisplayName "COE Jolly Devs" -GroupDiscription "The Jolly Developers of COE" -GroupMaxMembers 0;
 
 #Pull AD3 Managed Group by Name
-#Get-uInformAPIAD3ManagedGroupByName -GroupName "COE-SunnyDevs";
+Get-uInformAPIAD3ManagedGroupByName -GroupName "COE-JollyDevs";
 
 #Submit AD3 Managed Group Membership Change
-#Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d" -MembershipAction "REMOVE" -MemberGUID "0a0a2344-613a-4b69-8778-8f5fb3427ef6";
+Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID "060adaf5-9f07-4604-8988-f3cbfdd05da0" -MembershipAction "ADD" -MemberGUID "0a0a2344-613a-4b69-8778-8f5fb3427ef6";
 
 #Pull AD3 Managed Group by GUID
-#Get-uInformAPIAD3ManagedGroupByGUID -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d";
+Get-uInformAPIAD3ManagedGroupByGUID -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d";
 
 #Pull AD3 Managed Group Memembership
-#Get-uInformAPIAD3ManagedGroupMembership -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d";
+Get-uInformAPIAD3ManagedGroupMembership -GroupGUID "40147a00-fe74-446a-b8b7-ca4ad5047939";
 
-##Remove AD3 Managed Group by GUID 
-##Remove-uInformAPIAD3ManagedGroup -GroupGUID "b14fecaf-dec2-48e8-8d9e-b718b9a9f423";
+#Remove AD3 Managed Group by GUID 
+Remove-uInformAPIAD3ManagedGroup -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d";
 
-<#
+#Array of User Guids
 $arrUserGuids = @("ee07f20f-2c44-47cd-a2ce-aa8444da60ed",
                   "0a0a2344-613a-4b69-8778-8f5fb3427ef6",
                   "2db36974-a202-449e-bda7-b7bf59703398",
@@ -332,35 +335,26 @@ $arrUserGuids = @("ee07f20f-2c44-47cd-a2ce-aa8444da60ed",
                   "0d20c3f7-6b9a-4c0d-ad0d-9b5aa879a9df",
                   "413a516b-a59e-4bb0-ab59-d7b3f3642041");
 
+#Add Users to Group
 foreach($ucdUsrGuid in $arrUserGuids)
 {
-    Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID "f3b2434f-34b6-4f24-874e-9365eff3133d" -MembershipAction "ADD" -MemberGUID $ucdUsrGuid;
+    Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID "40147a00-fe74-446a-b8b7-ca4ad5047939" -MembershipAction "ADD" -MemberGUID $ucdUsrGuid;
 }
-#>
-
-#Demo AD3 Users
-#BC objectGuid: ee07f20f-2c44-47cd-a2ce-aa8444da60ed
-#DB objectGuid: 0a0a2344-613a-4b69-8778-8f5fb3427ef6
-#CD objectGuid: 2db36974-a202-449e-bda7-b7bf59703398
-#SC objectGuid: 96951b24-9cc8-41fe-9b94-a6d312b34735
-#RC objectGuid: 0d20c3f7-6b9a-4c0d-ad0d-9b5aa879a9df
-#TM objectGuid: 413a516b-a59e-4bb0-ab59-d7b3f3642041
-#Demo AD3 Groups
-#CA objectGuid: ad4ca617-85f5-4514-a61f-f0f9dd9f8b90
 
 
 <#
-objectGuid                 : f3b2434f-34b6-4f24-874e-9365eff3133d
-displayName                : COE-SunnyDevs
-distinguishedName          : CN=COE-SunnyDevs,OU=UserCreatedGroups,OU=ManagedGroups,DC=ad3,DC=ucdavis,DC=edu
-ownedByGuid                : bd7bd795-a1ba-4bf7-baa1-0b09498f1c92
-managedByGuid              : f3c79add-eae9-4112-873a-0708984a5c96
+objectGuid                 : 40147a00-fe74-446a-b8b7-ca4ad5047939
+displayName                : COE Jolly Devs
+distinguishedName          : CN=COE-JollyDevs,OU=UserCreatedGroups,OU=ManagedGroups,DC=ad3,DC=ucdavis,DC=edu
+ownedByGuid                : a10b04ae-cfaa-43b2-b096-dcf2e9430564
+managedByGuid              : 060adaf5-9f07-4604-8988-f3cbfdd05da0
 hasScopeOver               :
 maxMembers                 : 0
 extensionAttribute6        :
-samAccountName             : COE-SunnyDevs
-description                : COE Sunny Developers
+samAccountName             : COE-JollyDevs
+description                : The Jolly Developers of COE
 msExchRecipientDisplayType :
 proxyAddresses             : {}
-gidNumber                  : 296878848
+gidNumber                  : 247960485
 #>
+
