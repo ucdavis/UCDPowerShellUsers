@@ -75,8 +75,14 @@ $uInformManagementOU = "OU=Management,OU=ManagedGroups,DC=ad3,DC=ucdavis,DC=edu"
 #Var for AD3 Domain
 $ad3Domain = "ad3.ucdavis.edu";
 
-#HashTable of uInform Managed Groups Admin Account Membership Rights On
-$htuMngGrpGuids = @{};
+#HashTable of uInform Management Groups Admin is a Member Of
+$htuMngGrpGuidsExt34 = @{};
+
+#HashTable of uInform Managed Groups Admin has Rights On
+$htuMngGrpGuidsExt2 = @{};
+
+#Array of Addition Group Properties to Retrieve
+[string[]]$arrGrpProps = "extensionAttribute2","extensionAttribute3","extensionAttribute4";
 
 #Var for AD3 Admin Account
 $ad3AdminAcnt = Get-ADUser -Identity $admUsrID -Server $ad3Domain -Properties "memberof";
@@ -94,10 +100,17 @@ if([string]::IsNullOrEmpty($ad3AdminAcnt.DistinguishedName) -eq $false -and $ad3
     #Loop Through Management Groups and Add The Management Group and the Group it Controls
     foreach($uMngOUGrp in $uManagedOUGrps)
     {
+
         #Check and Add for the Management Group Guid
-        if($htuMngGrpGuids.ContainsKey($uMngOUGrp.ObjectGUID.ToString()) -eq $false)
+        if($htuMngGrpGuidsExt34.ContainsKey($uMngOUGrp.ObjectGUID.ToString()) -eq $false)
         {
-            $htuMngGrpGuids.Add($uMngOUGrp.ObjectGUID.ToString(),"1");
+            $htuMngGrpGuidsExt34.Add($uMngOUGrp.ObjectGUID.ToString(),"1");
+        }
+
+        #Check and Add Managed Related Group Guid
+        if($htuMngGrpGuidsExt2.ContainsKey($uMngOUGrp.extensionAttribute2.ToString()) -eq $false)
+        {
+            $htuMngGrpGuidsExt2.Add($uMngOUGrp.extensionAttribute2.ToString(),"1");
         }
 
     }#End of $uManagedOUGrps Foreach
@@ -114,25 +127,28 @@ if($offBoardMbr.MemberOf.Count -gt 0)
     #Loop Through Offboard User Membership
     foreach($obGrpDN in $offBoardMbr.MemberOf)
     {
+
         #AD3 Managed Service Groups Only Check
         if($obGrpDN.ToString().ToLower().Contains(",ou=managedgroups,dc=ad3,dc=ucdavis,dc=edu") -eq $true)
         {
             #Pull AD3 Group
-            $obmGrp = Get-ADGroup -Identity $obGrpDN -Server $ad3Domain -Properties "extensionAttribute3,extensionAttribute4";
+            $obmGrp = Get-ADGroup -Identity $obGrpDN -Server $ad3Domain -Properties $arrGrpProps;
 
-            $obmGrp;
-        
-            #Check If Group Guid is Listed in Managed Groups HashTable
-            if($htuMngGrpGuids.ContainsKey($obmGrp.ObjectGUID.ToString()) -eq $true)
+            if($htuMngGrpGuidsExt2.ContainsKey($obmGrp.ObjectGUID.ToString()) -eq $true)
             {
-                #$obmGrp;
-            }#
+                
+                #Submit AD3 Managed Group Membership Change
+                Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID $obmGrp.ObjectGUID.ToString() -MembershipAction "REMOVE" -MemberGUID $offBoardMbr.ObjectGUID.ToString();
 
+            }
+            elseif($obmGrp.DistinguishedName.ToString().Contains($uInformManagementOU) -eq $true -and $htuMngGrpGuidsExt2.ContainsKey($obmGrp.extensionAttribute2.ToString()) -eq $true)
+            {
+                $obmGrp;
+            }
+            
         }#End of AD3 Groups Only Check
         
     }#End of MemberOf Foreach
 
 }#End of Offboard User Group Membership Count
 
-#$htuMngGrpGuids | format-list;
-#>
