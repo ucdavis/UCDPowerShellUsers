@@ -1,7 +1,7 @@
 <#
     Title: ad3_offboarding.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2024-07-03
+    Last Edit: 2024-07-04
 #>
 
 #Var for AD3 Account of uInform API Keys
@@ -117,7 +117,6 @@ if([string]::IsNullOrEmpty($ad3AdminAcnt.DistinguishedName) -eq $false -and $ad3
 
 }#End of Null\Empty Check on AD3 Admin Account
 
-
 #Pull Offboard Member Group Memberships
 $offBoardMbr = Get-ADUser -Identity $offBoardUsrID -Server $ad3Domain -Properties "memberOf";
 
@@ -134,6 +133,7 @@ if($offBoardMbr.MemberOf.Count -gt 0)
             #Pull AD3 Group
             $obmGrp = Get-ADGroup -Identity $obGrpDN -Server $ad3Domain -Properties $arrGrpProps;
 
+            #Check to See If Admin Account has Rights to Group. Else If Is Group a Management Group that Admin Account has Manager Rights On
             if($htuMngGrpGuidsExt2.ContainsKey($obmGrp.ObjectGUID.ToString()) -eq $true)
             {
                 
@@ -143,8 +143,17 @@ if($offBoardMbr.MemberOf.Count -gt 0)
             }
             elseif($obmGrp.DistinguishedName.ToString().Contains($uInformManagementOU) -eq $true -and $htuMngGrpGuidsExt2.ContainsKey($obmGrp.extensionAttribute2.ToString()) -eq $true)
             {
-                $obmGrp;
-            }
+                #Pull Regular Related Managed Group to Determine If User has Owners or Managers rights
+                $rgrMngGrp = Get-ADGroup -Identity $obmGrp.extensionAttribute2.ToString() -Server $ad3Domain -Properties $arrGrpProps;
+
+                #Check Regular Managed Group for Managers Related Group Guid (extensionAttribute4)
+                if([string]::IsNullOrEmpty($rgrMngGrp.extensionAttribute4) -eq $false -and $rgrMngGrp.extensionAttribute4.ToString() -eq $obmGrp.ObjectGUID.ToString())
+                {
+                    #Submit AD3 Managed Group Membership Change
+                    Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID $obmGrp.ObjectGUID.ToString() -MembershipAction "REMOVE" -MemberGUID $offBoardMbr.ObjectGUID.ToString();
+                }
+
+            }#End of Admin Account Rights Checks
             
         }#End of AD3 Groups Only Check
         
