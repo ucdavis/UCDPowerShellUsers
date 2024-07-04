@@ -97,7 +97,7 @@ if([string]::IsNullOrEmpty($ad3AdminAcnt.DistinguishedName) -eq $false -and $ad3
     #Pull AD3 Management Groups the Admin is a Member Of
     $uManagedOUGrps = Get-ADGroup -LDAPFilter $grpSrchFilter -SearchBase $uInformManagementOU -Server $ad3Domain -Properties "extensionAttribute2";
 
-    #Loop Through Management Groups and Add The Management Group and the Group it Controls
+    #Loop Through Management Groups and Add The Management Group and the Group it Controls to Respective HashTables
     foreach($uMngOUGrp in $uManagedOUGrps)
     {
 
@@ -133,7 +133,7 @@ if($offBoardMbr.MemberOf.Count -gt 0)
             #Pull AD3 Group
             $obmGrp = Get-ADGroup -Identity $obGrpDN -Server $ad3Domain -Properties $arrGrpProps;
 
-            #Check to See If Admin Account has Rights to Group. Else If Is Group a Management Group that Admin Account has Manager Rights On
+            #Check to See If Admin Account has Rights to Group. Else If Is Group a Management Group that Admin Account has Manager or Owner Rights On
             if($htuMngGrpGuidsExt2.ContainsKey($obmGrp.ObjectGUID.ToString()) -eq $true)
             {
                 
@@ -143,11 +143,20 @@ if($offBoardMbr.MemberOf.Count -gt 0)
             }
             elseif($obmGrp.DistinguishedName.ToString().Contains($uInformManagementOU) -eq $true -and $htuMngGrpGuidsExt2.ContainsKey($obmGrp.extensionAttribute2.ToString()) -eq $true)
             {
+
                 #Pull Regular Related Managed Group to Determine If User has Owners or Managers rights
                 $rgrMngGrp = Get-ADGroup -Identity $obmGrp.extensionAttribute2.ToString() -Server $ad3Domain -Properties $arrGrpProps;
 
-                #Check Regular Managed Group for Managers Related Group Guid (extensionAttribute4)
+                #Check Regular Managed Group for Managers Related Group Guid (extensionAttribute4). Removes Manager Rights
                 if([string]::IsNullOrEmpty($rgrMngGrp.extensionAttribute4) -eq $false -and $rgrMngGrp.extensionAttribute4.ToString() -eq $obmGrp.ObjectGUID.ToString())
+                {
+                    #Submit AD3 Managed Group Membership Change
+                    Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID $obmGrp.ObjectGUID.ToString() -MembershipAction "REMOVE" -MemberGUID $offBoardMbr.ObjectGUID.ToString();
+                }
+
+                #Check Regular Managed Group for Owners Related Group Guid (extensionAttribute3)
+                #Only Remove Owners Rights for the Offboarding Member if the Admin Account Already has Ownership Rights
+                if([string]::IsNullOrEmpty($rgrMngGrp.extensionAttribute3) -eq $false -and $rgrMngGrp.extensionAttribute3.ToString() -eq $obmGrp.ObjectGUID.ToString() -and $htuMngGrpGuidsExt34.ContainsKey($rgrMngGrp.extensionAttribute3.ToString()) -eq $true)
                 {
                     #Submit AD3 Managed Group Membership Change
                     Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID $obmGrp.ObjectGUID.ToString() -MembershipAction "REMOVE" -MemberGUID $offBoardMbr.ObjectGUID.ToString();
