@@ -1,8 +1,11 @@
 <#
     Title: ad3_offboarding.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2024-07-04
+    Last Edit: 2024-07-06
 #>
+
+#Import Custom uInform API Module (One Function to Remove Membership in a Group)
+Import-Module .\uInformAPI.psm1
 
 #Var for AD3 Account of uInform API Keys
 $admUsrID = "admin-dbunn";
@@ -19,55 +22,6 @@ $UCDAPIInfo.uinform_private_key = Get-Secret -Name "uInformAPI-Pvtkey" -AsPlainT
 $UCDAPIInfo.uinform_url_base = "https://ws.uinform.ucdavis.edu/";
 $UCDAPIInfo.iam_key = Get-Secret -Name "IAM-Key" -AsPlainText -Vault UCDInfo;
 $UCDAPIInfo.iam_url_base = "https://iet-ws.ucdavis.edu/api/iam/";
-
-#Function for Submitting an AD3 Managed Group Membership Change
-function Submit-uInformAPIAD3ManagedGroupMembershipChange()
-{
-    Param
-    (
-         [Parameter(Mandatory=$true)]
-         [string] $GroupGUID,
-         [Parameter(Mandatory=$true)]
-         [string] $MembershipAction,
-         [Parameter(Mandatory=$true)]
-         [string] $MemberGUID
-    )
-
-    #Custom Object for Post Body
-    $cstPostBody = new-object PSObject -Property(@{ userGuid=""; action="";});
-    $cstPostBody.userGuid = $MemberGUID
-    $cstPostBody.action = $MembershipAction.ToString().ToUpper();
-
-    #Convert Post Body to Json Object
-    $jsonPostBody = $cstPostBody | ConvertTo-Json -Compress;
-
-    #Var for Http Method
-    $method = "POST"
-
-    #Configure Request Signature
-    $timestamp =[int][double]::Parse($(Get-Date -date (Get-Date).ToUniversalTime()-uformat %s))
-    $sig = $method + ":" + $timestamp + ":" + $UCDAPIInfo.uinform_public_key;
-    $sha = [System.Security.Cryptography.KeyedHashAlgorithm]::Create("HMACSHA1");
-    $sha.Key = [System.Text.Encoding]::UTF8.Getbytes($UCDAPIInfo.uinform_private_key);
-    $enc = [Convert]::Tobase64String($sha.ComputeHash([System.Text.Encoding]::UTF8.Getbytes($sig)));
-
-    #Configure URL
-    $url = $UCDAPIInfo.uinform_url_base + "ManagedGroups/" + $GroupGUID + "/members"
-
-    #Configure Headers
-    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]";
-    $headers.Add('Accept','Application/Json')
-    $headers.Add('X-UTIMESTAMP', $timestamp)
-
-    #Create a Credential Object for HTTP Basic Auth
-    $p = $enc | ConvertTo-SecureString -asPlainText -Force
-    $credential = New-Object System.Management.Automation.PSCredential($UCDAPIInfo.uinform_public_key, $p)
-
-    #Make API request, selecting JSON properties from response
-    $rspObj = Invoke-WebRequest $url -Method $method -Headers $headers -Credential $credential -UseBasicParsing -Body $jsonPostBody -ContentType "application/json" | ConvertFrom-Json;
-
-    return $rspObj.responseObject;
-}
 
 #Var for uInform Management OU
 $uInformManagementOU = "OU=Management,OU=ManagedGroups,DC=ad3,DC=ucdavis,DC=edu";
