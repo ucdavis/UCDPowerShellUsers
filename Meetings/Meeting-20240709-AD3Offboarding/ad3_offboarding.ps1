@@ -14,7 +14,7 @@ $admUsrID = "admin-dbunn";
 $offBoardUsrID = "coehack";
 
 #Custom Object for UC Davis API Information
-$global:UCDAPIInfo = new-object PSObject -Property (@{ uinform_public_key=""; uinform_private_key=""; uinform_url_base=""; iam_key=""; iam_url_base=";"});
+$global:UCDAPIInfo = new-object PSObject -Property (@{ uinform_public_key=""; uinform_private_key=""; uinform_url_base=""; iam_key=""; iam_url_base="";});
 
 #Load Public and Private Keys for uInform and IAM API Access
 $UCDAPIInfo.uinform_public_key = Get-Secret -Name "uInformAPI-Pubkey" -AsPlainText -Vault UCDInfo;
