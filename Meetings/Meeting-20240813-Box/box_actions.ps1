@@ -26,6 +26,7 @@ function Get-BoxAPIToken()
     #Var for Headers Used in API Call 
     $headers = @{"Content-Type"="application/x-www-form-urlencoded"};
 
+    #Check to See if a New Token Needs to Requested
     if([Int64](Get-Date).AddMinutes(15).Ticks -gt $BoxAPITokenInfo.expires_in_ticks)
     {
         #API Call to Box OAuth2 URL
@@ -60,7 +61,6 @@ $headersBox = @{"Authorization"="Bearer " + $BoxAPITokenInfo.box_api_token};
 #Var for Box API Base URL
 [string]$boxAPIBaseURL = "https://api.box.com/2.0/";
 
-<#
 #Var for URL of Box "Me" User
 [string]$boxMeURL = "https://api.box.com/2.0/users/me";
 
@@ -79,7 +79,7 @@ $arrBoxTestingFolders = @();
 
 #Custom Objects for Box Testing Folders
 $boxFldrDLPData = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Data1"; box_folder_id="278656463669";});
-$boxFldrDLPResearch = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Research"; box_folder_id="278655100161";});
+$boxFldrDLPResearch = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Research1"; box_folder_id="278655100161";});
 $boxFldrDLPShares = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Shares1"; box_folder_id="278656708709";});
 
 #Adding Testing Folders to Array
