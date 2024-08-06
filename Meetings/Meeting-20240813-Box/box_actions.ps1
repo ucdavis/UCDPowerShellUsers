@@ -1,7 +1,7 @@
 <#
     Title: box_actions.ps1
-    Authors: Dean Bunn and Ben Clark
-    Last Edit: 2024-08-05
+    Authors: Dean Bunn, Ben Clark, and Calvin Robertson
+    Last Edit: 2024-08-06
 #>
 
 #Custom Object for Box Token Information
@@ -80,7 +80,7 @@ $arrBoxTestingFolders = @();
 #Custom Objects for Box Testing Folders
 $boxFldrDLPData = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Data1"; box_folder_id="278656463669";});
 $boxFldrDLPResearch = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Research"; box_folder_id="278655100161";});
-$boxFldrDLPShares = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Shares"; box_folder_id="278656708709";});
+$boxFldrDLPShares = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Shares1"; box_folder_id="278656708709";});
 
 #Adding Testing Folders to Array
 $arrBoxTestingFolders += $boxFldrDLPData;
@@ -100,6 +100,9 @@ foreach($boxTF in $arrBoxTestingFolders)
     #Var for URI Box Folder Collaborators
     [string]$boxURIFldrCollabs = $boxURIFldrInfo + "/collaborations";
 
+    #Var for URI Box Upload Files
+    [string]$boxURIUploadFiles = "https://upload.box.com/api/2.0/files/content";
+
     #Pull Basic Folder Information
     if($boxTF.box_folder_name -eq "COE-DLP-Testing-Data")
     {
@@ -116,6 +119,37 @@ foreach($boxTF in $arrBoxTestingFolders)
     {
         #Getting Collaborators Listed on Folder
         (Invoke-RestMethod -Uri $boxURIFldrCollabs -Method Get -Headers $headersBox).entries;
+    }
+
+    #Upload Files to a Folder
+    if($boxTF.box_folder_name -eq "COE-DLP-Testing-Research")
+    {
+
+        #Var for Local File to Upload to Box
+        $localFile = "C:\Users\dbunn\Downloads\CR1000-Homewood-LakeData.dat";
+
+        #Read the Content of the File
+        $fileContent = [System.IO.File]::ReadAllBytes($localFile)
+
+        #Create the Form Data for the Request
+        $boundary = [System.Guid]::NewGuid().ToString();
+        $contentType = "multipart/form-data; boundary=`"$boundary`""
+
+        $attributesPart = "--$boundary`r`n" +
+                            "Content-Disposition: form-data; name=`"attributes`"`r`n`r`n" +
+                            "{`"name`":`"$(Split-Path -Leaf $localFile)`",`"parent`":{`"id`":`"" + $boxTF.box_folder_id + "`"}}`r`n"
+
+        $filePart = "--$boundary`r`n" +
+                        "Content-Disposition: form-data; name=`"file`"; filename=`"$(Split-Path -Leaf $localFile)`"`r`n" +
+                        "Content-Type: application/octet-stream`r`n`r`n" +
+                        [System.Text.Encoding]::UTF8.GetString($fileContent) + "`r`n" +
+                        "--$boundary--`r`n"
+
+        $body = $attributesPart + $filePart
+
+        #Upload File to Box
+        Invoke-RestMethod -Uri $boxURIUploadFiles -Headers $headersBox -Method Post -Body $body -ContentType $contentType
+
     }
 
 
