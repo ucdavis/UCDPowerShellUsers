@@ -1,7 +1,7 @@
 <#
     Title: box_actions.ps1
     Authors: Dean Bunn, Ben Clark, and Calvin Robertson
-    Last Edit: 2024-08-06
+    Last Edit: 2024-08-12
 #>
 
 #Custom Object for Box Token Information
@@ -9,26 +9,28 @@ $global:BoxAPITokenInfo = new-object PSObject -Property (@{ box_api_token=""; ex
 
 function Get-BoxAPIToken()
 {
-    #Var for Base Box OAuth URL
-    [string]$box_oauth2_url = "https://api.box.com/oauth2/token";
-
-    #Custom Dictionary for Box Required Items
-    $boxRequest = @{client_id = "";
-                    client_secret = "";
-                    grant_type = "client_credentials";
-                    box_subject_type = "enterprise";
-                    box_subject_id = "252054";};
-
-    #Load Secrets for API Call
-    $boxRequest.client_id = Get-Secret -Name "Box-ClientID" -AsPlainText -Vault UCDInfo;
-    $boxRequest.client_secret = Get-Secret -Name "Box-ClientSecret" -AsPlainText -Vault UCDInfo;
-
-    #Var for Headers Used in API Call 
-    $headers = @{"Content-Type"="application/x-www-form-urlencoded"};
 
     #Check to See if a New Token Needs to Requested
     if([Int64](Get-Date).AddMinutes(15).Ticks -gt $BoxAPITokenInfo.expires_in_ticks)
     {
+
+        #Var for Base Box OAuth URL
+        [string]$box_oauth2_url = "https://api.box.com/oauth2/token";
+
+        #Custom Dictionary for Box Required Items
+        $boxRequest = @{client_id = "";
+                        client_secret = "";
+                        grant_type = "client_credentials";
+                        box_subject_type = "enterprise";
+                        box_subject_id = "252054";};
+
+        #Load Secrets for API Call
+        $boxRequest.client_id = Get-Secret -Name "Box-ClientID" -AsPlainText -Vault UCDInfo;
+        $boxRequest.client_secret = Get-Secret -Name "Box-ClientSecret" -AsPlainText -Vault UCDInfo;
+
+        #Var for Headers Used in API Call 
+        $headers = @{"Content-Type"="application/x-www-form-urlencoded"};
+
         #API Call to Box OAuth2 URL
         $rtnTokenInfo = Invoke-RestMethod -Uri $box_oauth2_url -Method Post -Headers $headers -Body $boxRequest;
 
@@ -126,10 +128,10 @@ foreach($boxTF in $arrBoxTestingFolders)
     {
 
         #Var for Local File to Upload to Box
-        $localFile = "C:\Users\dbunn\Downloads\CR1000-Homewood-LakeData.dat";
+        $localFile = "C:\Users\dbunn\Downloads\CR1000-Homewood-LakeData.txt";
 
         #Read the Content of the File
-        $fileContent = [System.IO.File]::ReadAllBytes($localFile)
+        $fileContent = [System.IO.File]::ReadAllBytes($localFile);
 
         #Create the Form Data for the Request
         $boundary = [System.Guid]::NewGuid().ToString();
@@ -154,3 +156,5 @@ foreach($boxTF in $arrBoxTestingFolders)
 
 
 }#End of $arrBoxTestingFolders Foreach
+
+#>
