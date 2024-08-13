@@ -1,4 +1,4 @@
-## Box
+## Box Actions
 
 ### Resource Links
 

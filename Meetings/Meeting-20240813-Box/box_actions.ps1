@@ -1,12 +1,13 @@
 <#
     Title: box_actions.ps1
     Authors: Dean Bunn, Ben Clark, and Calvin Robertson
-    Last Edit: 2024-08-12
+    Last Edit: 2024-08-13
 #>
 
 #Custom Object for Box Token Information
 $global:BoxAPITokenInfo = new-object PSObject -Property (@{ box_api_token=""; expires_in_ticks=0;});
 
+#Function for Initializing and Updating Box API Token
 function Get-BoxAPIToken()
 {
 
@@ -53,7 +54,6 @@ function Get-BoxAPIToken()
    
 }#End of Get-BoxAPIToken Function
 
-
 #Pull OAuth API Access Token from Box
 Get-BoxAPIToken;
 
@@ -63,29 +63,20 @@ $headersBox = @{"Authorization"="Bearer " + $BoxAPITokenInfo.box_api_token};
 #Var for Box API Base URL
 [string]$boxAPIBaseURL = "https://api.box.com/2.0/";
 
-#Var for URL of Box "Me" User
-[string]$boxMeURL = "https://api.box.com/2.0/users/me";
-
-#Var for URL of Home Folder
-[string]$boxHFURL = "https://api.box.com/2.0/folders/0";
-
-#Pull Account Associated with OAuth Token
-Invoke-RestMethod -Uri $boxMeURL -Method Get -Headers $headersBox;
-
-#Pull Home Folder for Account
-Invoke-RestMethod -Uri $boxHFURL -Method Get -Headers $headersBox;
-#>
-
 #Array of Box Testing Folders
 $arrBoxTestingFolders = @();
 
 #Custom Objects for Box Testing Folders
+$boxFldrUsrRoot = new-object PSObject -Property (@{ box_folder_name="Root"; box_folder_id="0";});
 $boxFldrDLPData = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Data1"; box_folder_id="278656463669";});
+$boxFldrDLPInventory = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Inventory1"; box_folder_id="280054684698";});
 $boxFldrDLPResearch = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Research1"; box_folder_id="278655100161";});
 $boxFldrDLPShares = new-object PSObject -Property (@{ box_folder_name="COE-DLP-Testing-Shares1"; box_folder_id="278656708709";});
 
 #Adding Testing Folders to Array
+$arrBoxTestingFolders += $boxFldrUsrRoot;
 $arrBoxTestingFolders += $boxFldrDLPData;
+$arrBoxTestingFolders += $boxFldrDLPInventory;
 $arrBoxTestingFolders += $boxFldrDLPResearch;
 $arrBoxTestingFolders += $boxFldrDLPShares;
 
@@ -105,15 +96,27 @@ foreach($boxTF in $arrBoxTestingFolders)
     #Var for URI Box Upload Files
     [string]$boxURIUploadFiles = "https://upload.box.com/api/2.0/files/content";
 
-    #Pull Basic Folder Information
+    #Pull Root Folder and API User Information
+    if($boxTF.box_folder_name -eq "Root")
+    {
+        #Var for URL of Box "Me" User
+        [string]$boxMeURL = "https://api.box.com/2.0/users/me";
+
+        #Pull Account Associated with OAuth Token
+        Invoke-RestMethod -Uri $boxMeURL -Method Get -Headers $headersBox;
+
+        #Pull Home Folder for Account
+        Invoke-RestMethod -Uri $boxURIFldrInfo -Method Get -Headers $headersBox;
+    }
+
+    #Pull General Folder Information
     if($boxTF.box_folder_name -eq "COE-DLP-Testing-Data")
     {
-       #Getting Folder Basic Information
+       #Getting Folder General Information
        Invoke-RestMethod -Uri $boxURIFldrInfo -Method Get -Headers $headersBox;
 
        #Getting a Folder Items
        (Invoke-RestMethod -Uri $boxURIFldrItems -Method Get -Headers $headersBox).entries;
-
     }
 
     #Pull Folder Collaborators
@@ -121,6 +124,13 @@ foreach($boxTF in $arrBoxTestingFolders)
     {
         #Getting Collaborators Listed on Folder
         (Invoke-RestMethod -Uri $boxURIFldrCollabs -Method Get -Headers $headersBox).entries;
+    }
+
+    #Example of No Access Rights
+    if($boxTF.box_folder_name -eq "COE-DLP-Testing-Inventory")
+    {
+        #Attempting to Retrieve Information on a Folder the Account Has No Access To
+        Invoke-RestMethod -Uri $boxURIFldrInfo -Method Get -Headers $headersBox;
     }
 
     #Upload Files to a Folder
@@ -154,7 +164,4 @@ foreach($boxTF in $arrBoxTestingFolders)
 
     }
 
-
 }#End of $arrBoxTestingFolders Foreach
-
-#>
