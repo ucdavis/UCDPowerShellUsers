@@ -8,4 +8,5 @@
 - [2024-05-14 uInform API Usage](Meetings/Meeting-20240514-uInformAPI)
 - [2024-07-09 AD3 Offboarding](Meetings/Meeting-20240709-AD3Offboarding)
 - [2024-08-13 Box Actions](Meetings/Meeting-20240813-Box)
+- [2024-09-09 Home Directories](Meetings/Meeting-20240909-HomeDirectories)
 
