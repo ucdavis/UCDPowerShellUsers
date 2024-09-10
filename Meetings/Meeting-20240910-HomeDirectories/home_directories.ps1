@@ -1,7 +1,7 @@
 <#
     Title: home_directories.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2024-09-09
+    Last Edit: 2024-09-10
 #>
 
 #Var for Home Directories Folder Location
@@ -31,7 +31,7 @@ $htHDIgnore.Add("public","1");
 $ad3Domain = "ad3.ucdavis.edu";
 
 #Array of Addition User Properties to Retrieve
-[string[]]$arrAdtUsrProps = "lastLogonTimestamp","displayName";
+[string[]]$arrAdtUsrProps = "lastLogonTimestamp","displayName","extensionAttribute9";
 
 #Pull All the Directories Under the Home Directories Folder
 $UHDirctories = Get-ChildItem -Path $UHDFldrLoc -Directory;
@@ -57,6 +57,7 @@ foreach($uhdDir in $UHDirctories)
                                                         ADUserUPN="";
                                                         ADUserEnabled="";
                                                         ADUserFullName="";
+                                                        ADUserDeptCode="";
                                                         ADUserLastLoginTimeStamp="";
                                                     });
 
@@ -91,6 +92,12 @@ foreach($uhdDir in $UHDirctories)
                 $cstFldrInfo.ADUserFullName = $ad3UsrAcnt.GivenName + " " + $ad3UsrAcnt.Surname;
             }
 
+            #Set Primary Payroll Department Code
+            if([string]::IsNullOrEmpty($ad3UsrAcnt.extensionAttribute9) -eq $false -and $ad3UsrAcnt.extensionAttribute9.ToString().Contains(",") -eq $true)
+            {
+                $cstFldrInfo.ADUserDeptCode = $ad3UsrAcnt.extensionAttribute9.ToString().Split(",")[0];
+            }
+
             #Set Last Login TimeStamp
             if($null -ne $ad3UsrAcnt.lastLogonTimestamp)
             {
@@ -110,4 +117,4 @@ foreach($uhdDir in $UHDirctories)
 }#End $UHDirectories 
 
 #Export Reporting Array to CSV
-$arrReporting | Sort-Object -Property DirName | Select-Object -Property DirName,ProfileHDDate,ProfileLoc,ADUserID,ADUserUPN,ADUserEnabled,ADUserFullName,ADUserLastLoginTimeStamp | Export-Csv -Path $rptName -NoTypeInformation;
+$arrReporting | Sort-Object -Property DirName | Select-Object -Property DirName,ProfileHDDate,ProfileLoc,ADUserID,ADUserUPN,ADUserEnabled,ADUserFullName,ADUserDeptCode,ADUserLastLoginTimeStamp | Export-Csv -Path $rptName -NoTypeInformation;
