@@ -16,11 +16,14 @@ Import-Module ActiveDirectory;
 #Var for Search Base
 [string]$adSrchBase = "OU=ucdUsers,DC=ad3,DC=ucdavis,DC=edu";
 
+#Var for DN of ADFS DUO Enabled Users
+[string]$dnADFSDUOEnabledGrp = (Get-ADGroup -Identity "7661679c-260d-4b91-a7c4-b9109c1d6aac" -Server $dmnFQDN).DistinguishedName;
+
 #Array of Addition Group Properties to Retrieve
-[string[]]$arrUsrProps = "displayName","extensionAttribute5","extensionAttribute7";
+[string[]]$arrUsrProps = "displayName","extensionAttribute5","extensionAttribute7","msExchRecipientTypeDetails";
 
 #Var for Report Name
-[string]$rptName = "Department_Accounts_" + (Get-Date).ToString("yyyy-MM-dd") + ".csv";
+[string]$rptName = "AD3_Department_Accounts_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv";
 
 #Array for Department Accounts
 $arrDeptAccounts = @();
@@ -53,6 +56,7 @@ foreach($deptCode in $deptCodes)
             $cstDptAccnt = new-object PSObject -Property (@{ UserID="";
                                                              UPN="";
                                                              Enabled="";
+                                                             AD3DUO="";
                                                              DisplayName=""; 
                                                              EmailHost="";
                                                              DepartmentCode="";
@@ -66,7 +70,7 @@ foreach($deptCode in $deptCodes)
             $cstDptAccnt.UPN = $adDeptAccnt.UserPrincipalName;
             $cstDptAccnt.Enabled = $adDeptAccnt.Enabled;
             $cstDptAccnt.DepartmentCode = $deptCode;
-            
+
             #Set Display Name
             if([string]::IsNullOrEmpty($adDeptAccnt.DisplayName) -eq $false)
             {
@@ -92,6 +96,18 @@ foreach($deptCode in $deptCodes)
                 }
                 
             }
+            elseif($null -ne $adDeptAccnt.msExchRecipientTypeDetails)
+            {
+                #Pull Length of Exchange Recipient Type 
+                [int]$nExgTD = $adDeptAccnt.msExchRecipientTypeDetails.ToString().Length;
+
+                #Make Sure Type is Large Enough to be Mailbox
+                if($nExgTD -gt 9)
+                {
+                    $cstDptAccnt.EmailHost = "Office365";
+                }
+
+            }#End of Email Host
 
             #Set Owner IAM ID
             if([string]::IsNullOrEmpty($adDeptAccnt.extensionAttribute7) -eq $false)
@@ -104,6 +120,31 @@ foreach($deptCode in $deptCodes)
                 {
                     $htOwnerIAMIDs.Add($adDeptAccnt.extensionAttribute7.ToString().Trim(),"1");
                 }
+
+            }
+
+            #Determine DUO Enabled Group Membership
+            if([string]::IsNullOrEmpty($cstDptAccnt.UPN) -eq $false)
+            {
+
+                #Var for AD Filter Checking Membership in ADFS DUO Enabled Group
+                [string]$adLDAPFilterDUOMbr = "(&(objectclass=user)(memberof:1.2.840.113556.1.4.1941:=" + $dnADFSDUOEnabledGrp + ")(userPrincipalName=" + $cstDptAccnt.UPN + "))"
+
+                #Query AD to See if Dept Account is a Member of DUO Enabled Group
+                $duoMbr = Get-ADUser -LDAPFilter $adLDAPFilterDUOMbr -SearchBase $adSrchBase -server $dmnFQDN
+                
+                #Null\Empty Check on Return AD Object Name
+                if([string]::IsNullOrEmpty($duoMbr.Name) -eq $false)
+                {
+                    $cstDptAccnt.AD3DUO = "True";
+                }
+                else 
+                {
+                    $cstDptAccnt.AD3DUO = "False";
+                }
+
+                #Close Out DUO Member Object
+                $duoMbr = $null;
 
             }
 
@@ -149,10 +190,7 @@ foreach($ownerkey in $htOwnerIAMIDs.Keys)
 }#End of $htOwnerIAMIDs.Keys Foreach
 
 #Export Reporting Array to CSV
-$arrDeptAccounts | Sort-Object -Property UserID | Select-Object -Property UserID,UPN,Enabled,DisplayName,EmailHost,DepartmentCode,OwnerIAMID,OwnerUserName,OwnerUPN | Export-Csv -Path $rptName -NoTypeInformation;
-
-
-
+$arrDeptAccounts | Sort-Object -Property UserID | Select-Object -Property UserID,UPN,Enabled,AD3DUO,DisplayName,EmailHost,DepartmentCode,OwnerIAMID,OwnerUserName,OwnerUPN | Export-Csv -Path $rptName -NoTypeInformation;
 
 
 
