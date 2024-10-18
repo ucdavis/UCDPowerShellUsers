@@ -2,6 +2,7 @@
 
 ### Meetings
 
+- [2024-11-12 Dept Accounts](Meetings/Meeting-20241112-DeptAccounts)
 - [2024-10-08 GPO Searching](Meetings/Meeting-20241008-GPOSearching)
 - [2024-09-10 Home Directories](Meetings/Meeting-20240910-HomeDirectories)
 - [2024-08-13 Box Actions](Meetings/Meeting-20240813-Box)
