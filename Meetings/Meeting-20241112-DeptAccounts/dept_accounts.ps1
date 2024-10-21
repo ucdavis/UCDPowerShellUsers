@@ -25,6 +25,9 @@ Import-Module ActiveDirectory;
 #Var for Report Name
 [string]$rptName = "AD3_Department_Accounts_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv";
 
+#Var for MS Exchange Mailbox Type Check
+[int64]$n64MSExgMailBxType = [int64]::Parse("1000000000");
+
 #Array for Department Accounts
 $arrDeptAccounts = @();
 
@@ -98,11 +101,12 @@ foreach($deptCode in $deptCodes)
             }
             elseif($null -ne $adDeptAccnt.msExchRecipientTypeDetails)
             {
-                #Pull Length of Exchange Recipient Type 
-                [int]$nExgTD = $adDeptAccnt.msExchRecipientTypeDetails.ToString().Length;
 
-                #Make Sure Type is Large Enough to be Mailbox
-                if($nExgTD -gt 9)
+                #Pull Exchange Recipient Type and Check for Office365 Mailbox
+                [Int64]$uERTD = [int64]::Parse($adDeptAccnt.msExchRecipientTypeDetails.ToString());
+
+                #Check to See If It's Large Enough to be an Office365 Mailbox
+                if($uERTD -gt $n64MSExgMailBxType)
                 {
                     $cstDptAccnt.EmailHost = "Office365";
                 }
