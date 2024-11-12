@@ -5,7 +5,7 @@
 #>
 
 #Array of Department Codes
-$deptCodes = @("024025");
+$deptCodes = @("024000","024020","024025");
 
 #Import Active Directory Module
 Import-Module ActiveDirectory;
@@ -20,6 +20,9 @@ Import-Module ActiveDirectory;
 [string]$dnADFSDUOEnabledGrp = (Get-ADGroup -Identity "7661679c-260d-4b91-a7c4-b9109c1d6aac" -Server $dmnFQDN).DistinguishedName;
 
 #Array of Addition Group Properties to Retrieve
+#extensionAttribute5 = Campus Mail Routing Information
+#extensionAttribute7 = IAMID of Associated Account Owner
+#More Information at https://kb.ucdavis.edu/?id=02304
 [string[]]$arrUsrProps = "displayName","extensionAttribute5","extensionAttribute7","msExchRecipientTypeDetails";
 
 #Var for Report Name
@@ -40,8 +43,9 @@ $htOwnerIAMIDs = @{};
 #Loop Through Each Department Code and Pull Department Accounts Associated with it
 foreach($deptCode in $deptCodes)
 {
-
     #Var for LDAP Filter
+    #extensionAttribute11 = Mothra Account Type
+    #extensionAttribute9 = List of IAM Payroll Associations of Account Owner
     [string]$adLDAPFilter = "(&(objectclass=user)(extensionAttribute11=D)(|(department=" + $deptCode + ")(departmentNumber=" + $deptCode + ")(extensionAttribute9=*" + $deptCode + "*)))";
 
     #Query AD for UCD Department Accounts
