@@ -21,7 +21,7 @@ if([string]::IsNullOrEmpty($SlackAPIInfo.webhook_base) -eq $false -and [string]:
 
     #Var for Prod Channel URI
     $uriProdChannel = $SlackAPIInfo.webhook_base + $SlackAPIInfo.prod_channel_path;
-    
+
     #Custom Object for Basic Slack API Message Body
     $cstPostBodyBasic = New-Object PSObject -Property (@{text="";});
 
@@ -38,7 +38,6 @@ if([string]::IsNullOrEmpty($SlackAPIInfo.webhook_base) -eq $false -and [string]:
     $slackAPIBasicCallStatus;
     #>
 
-    <#
     #Array of Server Names to Ping Check
     $arrServers = @("addc12c","coe-it-data","coe-it-abx22","coe-it-sql22","coe-it-wvs22","coe-it-app22","coe-it-wins22");
 
@@ -60,19 +59,21 @@ if([string]::IsNullOrEmpty($SlackAPIInfo.webhook_base) -eq $false -and [string]:
        #Var for Ping Fails 
        [int32]$pingFails = 0;
 
-       #Ping Server Four Times and Check Results
+       #Ping Server and Check Results
        $pingResults = Test-Connection -TargetName $uServer -Count $pingCntChecks;
 
+       #Check Each of the Ping Results
        foreach($pingResult in $pingResults)
        {
-
+           #Increment Failed Ping Count for Non-Successful Pings
            if($pingResult.Status.ToString().ToLower() -ne "success")
            {
                 $pingFails++;
            }
 
-       }
+       }#End of Foreach Ping Results
 
+       #Check Total Number of Fails to Determine Server Slack Message Status
        if($pingFails -ge $pingMaxFails)
        {
          #Add Failed Server Status Block to Json Server Status. ":skull:" and ":scream:" are options for emoji
