@@ -2,7 +2,7 @@
     Title: ou_mailboxes_report.ps1
     Authors: Dean Bunn
     Inspired By: Ben Clark
-    Last Edit: 2025-03-11
+    Last Edit: 2025-02-06
 #>
 
 #Var for Department OU
@@ -48,6 +48,7 @@ $nISDSP = $dsOU.PropertiesToLoad.Add("proxyAddresses");
 $nISDSP = $dsOU.PropertiesToLoad.Add("distinguishedName");
 $nISDSP = $dsOU.PropertiesToLoad.Add("msExchRecipientTypeDetails");
 $nISDSP = $dsOU.PropertiesToLoad.Add("userPrincipalName");
+$nISDSP = $dsOU.PropertiesToLoad.Add("userAccountControl");
 
 #Search Result Collection to Hold Search Results
 [DirectoryServices.SearchResultCollection]$srcResults = $dsOU.FindAll();
@@ -61,6 +62,7 @@ if($null -ne $srcResults)
 
         #Create Custom Reporting Object for OU Account Information
         $cstOUAccnt = new-object PSObject -Property (@{ UserID="";
+                                                        AccountStatus="";
                                                         UPN="";
                                                         CN="";
                                                         SN="";
@@ -94,6 +96,21 @@ if($null -ne $srcResults)
         {
             $cstOUAccnt.DisplayName = $srcResult.Properties["displayName"][0].ToString();
         }
+
+        #Check Account Status
+        if($srcResult.Properties["userAccountControl"].Count -gt 0)
+        {
+            switch($srcResult.Properties["userAccountControl"][0].ToString())
+            {
+                '512'{$cstOUAccnt.AccountStatus = "Enabled"; Break;}
+                '514'{$cstOUAccnt.AccountStatus = "Disabled"; Break;}
+                '544'{$cstOUAccnt.AccountStatus = "Enabled"; Break;}
+                '546'{$cstOUAccnt.AccountStatus = "Disabled"; Break;}
+                '66048'{$cstOUAccnt.AccountStatus = "Enabled"; Break;}
+                '66050'{$cstOUAccnt.AccountStatus = "Disabled"; Break;}
+                default{$cstOUAccnt.AccountStatus = "Unknown";}
+            }
+        }#End of Account Status 
 
         #Check Mail 
         if($srcResult.Properties["mail"].Count -gt 0)
@@ -137,4 +154,4 @@ if($null -ne $srcResults)
 $deOU.Close();
 
 #Export Reporting Array to CSV
-$arrOUMailboxes | Sort-Object -Property UserID | Select-Object -Property UserID,UPN,CN,SN,GivenName,DisplayName,Mail,DN,ProxyAddresses | Export-Csv -Path $rptName -NoTypeInformation;
+$arrOUMailboxes | Sort-Object -Property UserID | Select-Object -Property UserID,AccountStatus,UPN,CN,SN,GivenName,DisplayName,Mail,DN,ProxyAddresses | Export-Csv -Path $rptName -NoTypeInformation;
