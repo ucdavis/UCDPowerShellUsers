@@ -2,7 +2,7 @@
     Title: ou_mailboxes_report.ps1
     Authors: Dean Bunn
     Inspired By: Ben Clark
-    Last Edit: 2025-02-06
+    Last Edit: 2025-02-07
 #>
 
 #Var for Department OU
@@ -69,7 +69,8 @@ if($null -ne $srcResults)
                                                         GivenName="";
                                                         DisplayName=""; 
                                                         Mail="";
-                                                        ProxyAddresses=""; 
+                                                        ProxyAddresses="";
+                                                        OULocation=""; 
                                                         DN="";
                                                     });
 
@@ -95,6 +96,33 @@ if($null -ne $srcResults)
         if($srcResult.Properties["displayName"].Count -gt 0)
         {
             $cstOUAccnt.DisplayName = $srcResult.Properties["displayName"][0].ToString();
+        }
+
+        #Determine OU Location (Reversed DN)
+        if([string]::IsNullOrEmpty($cstOUAccnt.DN) -eq $false)
+        {
+            #Var for Object DN Minus the Departments OU Path Upward 
+            [string]$objtDN = $cstOUAccnt.DN.ToLower().Replace(",ou=departments,dc=ou,dc=ad3,dc=ucdavis,dc=edu", "").Replace(",ou=", "\\").Replace("cn=", "");
+
+            #Create Array of DN Path
+            [array]$arrObjDN = $objtDN.Split('\\');
+
+            #Reverse Array
+            [array]::Reverse($arrObjDN);
+
+            #Var for Location
+            [string]$Location = "";
+
+            foreach($dnPart in $arrObjDN)
+            {
+                $Location += $dnPart + "\"; 
+            }
+
+            #Assign Report OU Location
+            $cstOUAccnt.OULocation = $Location.TrimEnd("\");
+
+            #$Location = $null;
+
         }
 
         #Check Account Status
@@ -154,4 +182,4 @@ if($null -ne $srcResults)
 $deOU.Close();
 
 #Export Reporting Array to CSV
-$arrOUMailboxes | Sort-Object -Property UserID | Select-Object -Property UserID,AccountStatus,UPN,CN,SN,GivenName,DisplayName,Mail,DN,ProxyAddresses | Export-Csv -Path $rptName -NoTypeInformation;
+$arrOUMailboxes | Sort-Object -Property UserID | Select-Object -Property UserID,AccountStatus,UPN,CN,SN,GivenName,DisplayName,Mail,OULocation,DN,ProxyAddresses | Export-Csv -Path $rptName -NoTypeInformation;
