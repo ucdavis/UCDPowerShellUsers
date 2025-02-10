@@ -44,6 +44,10 @@ $prctxOU = New-Object DirectoryServices.AccountManagement.PrincipalContext([Dire
 #Var for UCD Users DN Partial
 [string]$ucdUsersDNPartial = ",ou=ucdusers,dc=ad3,dc=ucdavis,dc=edu";
 
+#Var for UCD
+[string]$managedGroupsDNPartial = ",ou=managedgroups,dc=ad3,dc=ucdavis,dc=edu";
+
+#Loop Through Each AD Unnested Group Sync Custom Objects
 foreach($cstAUGS in $arrADUnnestedGrpSyncs)
 {
     #Hash Table for Source Groups Members GUIDs
@@ -129,83 +133,78 @@ foreach($cstAUGS in $arrADUnnestedGrpSyncs)
         #Var for Group's DN
         [string]$grpDNUNN = $deADGroupUNN.Properties["distinguishedname"][0].ToString();
 
-        #Var for GroupPrincipal for Unnested Group
-        $grpPrincipalUNN = $null;
-
-        #Configure Group Principal Based Upon Domain of Unnested Group
-        if($grpDNUNN.ToLower().Contains("dc=ou,") -eq $true)
+        #Check DN of Nested Group for Managed Groups Only
+        if($grpDNUNN.ToLower().EndsWith($managedGroupsDNPartial) -eq $true)
         {
-            $grpPrincipalUNN = [DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($prctxOU, [DirectoryServices.AccountManagement.IdentityType]::DistinguishedName,$grpDNUNN);
-        }
-        else 
-        {
+            #Var for GroupPrincipal for Unnested Group
             $grpPrincipalUNN = [DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($prctxAD3, [DirectoryServices.AccountManagement.IdentityType]::DistinguishedName,$grpDNUNN);
-        }
-
-        #Check Membership Count of Unnested Group
-        if($grpPrincipalUNN.Members.Count -gt 0)
-        {
-            #Pull All Unnested Membership for the Unnested Group
-            foreach($unnMbr in $grpPrincipalUNN.GetMembers($false))
-            {
-                #Load Current Members Into Remove Hash Table 
-                $htMTRFG.Add($unnMbr.Guid.ToString(),"1");
-                
-            }#End of Source Group Membership Foreach
-
-        }#End of Membership Count Check on Unnested Group
-
-        #Determine Which Users to Remove or Add Using Source Group(s) Members
-        if($htSrcGrpMbrGUIDs.Count -gt 0)
-        {
-            #Loop Through Source Groups Members Hash Table and Check Member Status
-            foreach($dsGUID in $htSrcGrpMbrGUIDs.Keys)
-            {
-                #Don't Remove Existing Members In Data Source Listing
-                if($htMTRFG.ContainsKey($dsGUID) -eq $true)
-                {
-                    $htMTRFG.Remove($dsGUID);
-                }
-                else 
-                {
-                    #Add Them to List to Be Added to Group
-                    $htMTATG.Add($dsGUID.ToString(),"1");
-                }
-
-            }#End of Data Source Members Add or Remove Checks
-
-        }#End of $htSrcGrpMbrGUIDs Empty Check
-
-        #Null\Empty Checks on uInform API Values
-        if([string]::IsNullOrEmpty($UCDAPIInfo.uinform_public_key) -eq $false -and [string]::IsNullOrEmpty($UCDAPIInfo.uinform_public_key) -eq $false)
-        {
-            #Check for Members to Remove
-            if($htMTRFG.Count -gt 0)
-            {
-                foreach($mtrfg in $htMTRFG.Keys)
-                {
-                    #Submit Remove Member Request to uInform API
-                    Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID $cstAUGS.AD3_Unnested_Grp_GUID -MembershipAction "REMOVE" -MemberGUID $mtrfg.ToString();
-                
-                }#End of $htMTRFG.Keys Foreach
-
-            }#End of Members to Remove
-
-            #Check for Members to Add
-            if($htMTATG.Count -gt 0)
-            {
-                #Loop Through AD3 User GUIDs to Add to Group
-                foreach($mtatg in $htMTATG.Keys)
-                {
-                    #Submit Add Member Request to uInform API
-                    Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID $cstAUGS.AD3_Unnested_Grp_GUID -MembershipAction "ADD" -MemberGUID $mtatg.ToString();
-                
-                }#End of $htMTATG.Keys Foreach
-
-            }#End of Members to Add
-
-        }#End of Null\Empty Checks on uInform API Values
         
+            #Check Membership Count of Unnested Group
+            if($grpPrincipalUNN.Members.Count -gt 0)
+            {
+                #Pull All Unnested Membership for the Unnested Group
+                foreach($unnMbr in $grpPrincipalUNN.GetMembers($false))
+                {
+                    #Load Current Members Into Remove Hash Table 
+                    $htMTRFG.Add($unnMbr.Guid.ToString(),"1");
+                    
+                }#End of Source Group Membership Foreach
+
+            }#End of Membership Count Check on Unnested Group
+        
+            #Determine Which Users to Remove or Add Using Source Group(s) Members
+            if($htSrcGrpMbrGUIDs.Count -gt 0)
+            {
+                #Loop Through Source Groups Members Hash Table and Check Member Status
+                foreach($dsGUID in $htSrcGrpMbrGUIDs.Keys)
+                {
+                    #Don't Remove Existing Members In Data Source Listing
+                    if($htMTRFG.ContainsKey($dsGUID) -eq $true)
+                    {
+                        $htMTRFG.Remove($dsGUID);
+                    }
+                    else 
+                    {
+                        #Add Them to List to Be Added to Group
+                        $htMTATG.Add($dsGUID.ToString(),"1");
+                    }
+
+                }#End of Data Source Members Add or Remove Checks
+
+            }#End of $htSrcGrpMbrGUIDs Empty Check
+
+            #Null\Empty Checks on uInform API Values
+            if([string]::IsNullOrEmpty($UCDAPIInfo.uinform_public_key) -eq $false -and [string]::IsNullOrEmpty($UCDAPIInfo.uinform_public_key) -eq $false)
+            {
+                #Check for Members to Remove
+                if($htMTRFG.Count -gt 0)
+                {
+                    foreach($mtrfg in $htMTRFG.Keys)
+                    {
+                        #Submit Remove Member Request to uInform API
+                        Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID $cstAUGS.AD3_Unnested_Grp_GUID -MembershipAction "REMOVE" -MemberGUID $mtrfg.ToString();
+                    
+                    }#End of $htMTRFG.Keys Foreach
+
+                }#End of Members to Remove
+
+                #Check for Members to Add
+                if($htMTATG.Count -gt 0)
+                {
+                    #Loop Through AD3 User GUIDs to Add to Group
+                    foreach($mtatg in $htMTATG.Keys)
+                    {
+                        #Submit Add Member Request to uInform API
+                        Submit-uInformAPIAD3ManagedGroupMembershipChange -GroupGUID $cstAUGS.AD3_Unnested_Grp_GUID -MembershipAction "ADD" -MemberGUID $mtatg.ToString();
+                    
+                    }#End of $htMTATG.Keys Foreach
+
+                }#End of Members to Add
+
+            }#End of Null\Empty Checks on uInform API Values
+
+        }#Group DN Check for AD3 Groups Only
+
         #Close Out Directory Entry for Unnested Group
         $deADGroupUNN.Close();
         
