@@ -2,7 +2,7 @@
     Title: ad3_managed_group_unnested_syncs.ps1
     Authors: Dean Bunn
     Inspired By: Ben Clark
-    Last Edit: 2025-01-24
+    Last Edit: 2025-02-10
 #>
 
 #Import Custom uInform API Module 
@@ -23,7 +23,8 @@ $arrADUnnestedGrpSyncs = @();
 $cstAD3UnnestMngdGrp1 = New-Object PSObject -Property (@{ AD3_Unnested_Grp_GUID="c462cf19-195a-4071-8273-02277b426a17";
                                                           AD3_Unnested_Grp_Name="COE-SW-Empire";
                                                           SRC_Nested_Groups_GUIDs=@("23e83beb-f5d6-476a-b1c7-505da5a9d0ad",
-                                                                                    "5f5701c5-a2dc-4848-bada-621b9f30cfca"); 
+                                                                                    "5f5701c5-a2dc-4848-bada-621b9f30cfca",
+                                                                                    "6fead534-0c18-4d98-8219-d9acc7d0e9aa"); 
                                                         });
 #Add Custom AD3 Managed Unnested Groups to Sync Array
 $arrADUnnestedGrpSyncs += $cstAD3UnnestMngdGrp1;
@@ -54,6 +55,7 @@ foreach($cstAUGS in $arrADUnnestedGrpSyncs)
     #HashTable for Members to Add to AD Group
     $htMTATG = @{};
 
+    #Loop Through Each Nested Source Group
     foreach($srcGrpGUID in $cstAUGS.SRC_Nested_Groups_GUIDs)
     {
         #Var for Sync Source Group's LDAP Path Based Upon AD GUID

@@ -2,7 +2,7 @@
     Title: ou_mailboxes_report.ps1
     Authors: Dean Bunn
     Inspired By: Ben Clark
-    Last Edit: 2025-02-07
+    Last Edit: 2025-02-10
 #>
 
 #Var for Department OU
@@ -102,10 +102,10 @@ if($null -ne $srcResults)
         if([string]::IsNullOrEmpty($cstOUAccnt.DN) -eq $false)
         {
             #Var for Object DN Minus the Departments OU Path Upward 
-            [string]$objtDN = $cstOUAccnt.DN.ToLower().Replace(",ou=departments,dc=ou,dc=ad3,dc=ucdavis,dc=edu", "").Replace(",ou=", "\\").Replace("cn=", "");
+            [string]$objtDN = $cstOUAccnt.DN.ToLower().Replace(",ou=departments,dc=ou,dc=ad3,dc=ucdavis,dc=edu", "").Replace(",ou=", ";").Replace("cn=", "");
 
             #Create Array of DN Path
-            [array]$arrObjDN = $objtDN.Split('\\');
+            [array]$arrObjDN = $objtDN.Split(';');
 
             #Reverse Array
             [array]::Reverse($arrObjDN);
@@ -121,9 +121,7 @@ if($null -ne $srcResults)
             #Assign Report OU Location
             $cstOUAccnt.OULocation = $Location.TrimEnd("\");
 
-            #$Location = $null;
-
-        }
+        }#End OU Location
 
         #Check Account Status
         if($srcResult.Properties["userAccountControl"].Count -gt 0)
@@ -149,9 +147,10 @@ if($null -ne $srcResults)
         #Pull Exchange Recipient Type and Check for Office365 Mailbox
         if($srcResult.Properties["msExchRecipientTypeDetails"].Count -gt 0)
         {
-            #Var for 
+            #Var for Exchange Recipient Type Details
             [Int64]$uERTD = [int64]::Parse($srcResult.Properties["msExchRecipientTypeDetails"][0].ToString());
 
+            #Compare Exchange Type with Office365 Mailbox Type
             if($uERTD -gt $n64MSExgMailBxType)
             {
 
@@ -165,7 +164,8 @@ if($null -ne $srcResults)
                             $cstOUAccnt.ProxyAddresses += $prxyAddr.ToString().ToLower().Replace("smtp:", "") + " ";
                         }
                     }
-                }
+                    
+                }#End ProxyAddresses
 
                 #Add Custom OU Object to Reporting Array
                 $arrOUMailboxes += $cstOUAccnt;
