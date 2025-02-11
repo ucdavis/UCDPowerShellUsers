@@ -31,13 +31,13 @@ c462cf19-195a-4071-8273-02277b426a17 = COE-SW-Empire
 eba03ec8-df4f-4849-8b46-d652e3571429 = COE-SW-Kamino
 ==========================================================
 6b0fd000-5dbd-4fe1-9d25-4d01dfcd7b35 = COE-SW-Inner-Rim
-COE-SW-Jakku
+2eabeafb-b963-499c-81ee-103be4459a02 = COE-SW-Jakku
 ==========================================================
 b4961625-87fc-4aec-bc72-7201880b2e79 = COE-SW-Outer-Rim
-COE-SW-Geonosis
-COE-SW-Mustafar
-COE-SW-Tatooine
-COE-SW-Yavin
+4bda141b-06c0-4c34-9ac3-cac0cc605bd2 = COE-SW-Geonosis
+9ae46aa4-06ab-47c6-b256-aa0040c1fc80 = COE-SW-Mustafar
+7ed4f50a-df55-4b68-9c91-e77c9e60b2a4 = COE-SW-Tatooine
+ac6d422b-0cf4-4a61-8858-2999a95c5bc6 = COE-SW-Yavin
 ==========================
 
 #>
