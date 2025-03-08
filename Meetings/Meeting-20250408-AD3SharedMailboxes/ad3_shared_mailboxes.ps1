@@ -21,10 +21,10 @@ Get-ConnectionInformation
 Disconnect-ExchangeOnline
 
 #Show Mailbox Information
-Get-EXOMailbox -Identity "dbunn@ucdavis.edu" -PropertySets All
+Get-EXOMailbox -Identity "ncode@ucdavis.edu" -PropertySets All
 
 #Show Mailbox Custom and Delivery Settings
-Get-EXOMailbox -Identity "dbunn@ucdavis.edu" -PropertySets Custom,Delivery
+Get-EXOMailbox -Identity "ncode@ucdavis.edu" -PropertySets Custom,Delivery
 
 #Mailbox Property Sets
 <#
@@ -40,17 +40,37 @@ Quota
 Retention
 #>
 
-#Show Mailbox Statistics 
-Get-EXOMailboxStatistics -Identity "dbunn@ucdavis.edu" -PropertySets All
+#Show Mailbox Statistics (Including Last Login Time)
+Get-EXOMailboxStatistics -Identity "ncode@ucdavis.edu" -PropertySets All
 
 #Show Mailbox Permissions
-Get-EXOMailboxPermission -Identity "dbunn@ucdavis.edu"
+Get-EXOMailboxPermission -Identity "ncode@ucdavis.edu"
 
 #Show Mailbox Folder Permissions
-Get-EXOMailboxFolderPermission -Identity "dbunn@ucdavis.edu:\Calendar"
+Get-EXOMailboxFolderPermission -Identity "ncode@ucdavis.edu:\Calendar"
 
 #Show Mobile Devices for User Account
-Get-EXOMobileDeviceStatistics -Mailbox "dbunn@ucdavis.edu"
+Get-EXOMobileDeviceStatistics -Mailbox "ncode@ucdavis.edu"
 
+#Show Send-As Rights for Mailbox
+Get-EXORecipientPermission -Identity "ncode@ucdavis.edu"
 
+#Show Distribution Group
+Get-DistributionGroup -Identity "coe-ncode-mbx@ad3.ucdavis.edu"
+
+###############################
+#Configuring a Shared Mailbox
+###############################
+
+#Configure Mailbox to Shared and Sent-As Message Copy
+Set-Mailbox -Identity "ncode@ucdavis.edu" -Type shared -MessageCopyForSentAsEnabled $True
+
+#Grant Full Mailbox Access to Distribution Group
+Add-MailboxPermission -Identity "ncode@ucdavis.edu" -User "coe-ncode-mbx@ad3.ucdavis.edu" -AccessRights FullAccess
+
+#Remove Full Mailbox Access to Distribution Group
+Remove-MailboxPermission -Identity "ncode@ucdavis.edu" -User "coe-ncode-mbx@ad3.ucdavis.edu" -AccessRights FullAccess
+
+#Grant Send-As Rights to Distribution Group
+Add-RecipientPermission -Identity "ncode@ucdavis.edu" -Trustee "coe-ncode-mbx@ad3.ucdavis.edu" -AccessRights SendAs
 
