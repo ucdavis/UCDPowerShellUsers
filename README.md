@@ -2,6 +2,7 @@
 
 ### Meetings
 
+- [2025-04-08 AD3 Shared Mailboxes](Meetings/Meeting-20250408-AD3SharedMailboxes)
 - [2025-03-11 OU Mailboxes Report](Meetings/Meeting-20250311-OUMailboxesReport)
 - [2025-02-11 AD3 Managed Group Unnested Syncs](Meetings/Meeting-20250211-AD3ManagedGroupUnnestedSyncs)
 - [2025-01-14 AD Group Unnested Syncs](Meetings/Meeting-20250114-ADGroupUnnestedSyncs)
