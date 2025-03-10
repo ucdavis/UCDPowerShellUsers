@@ -7,7 +7,7 @@ Commands for working with Shared Mailboxes in AD3
 - The ExchangeOnlineManagement module installed. See [Commands for Required Module](commands_for_required_module.ps1) script for installation commands
 - The account running the shell session must be in one of the uConnect RBAC "\<dept\>-MSGADMINS" groups
 
-### Exchange Commands
+### Connect to Exchange Online
 
 Import Exchange Online Management Module and Connect
 ```powershell
@@ -22,6 +22,9 @@ Close Connection (Run When Done Working with Exchange)
 ```powershell
 Disconnect-ExchangeOnline
 ```
+
+### Displaying Exchange Item Information
+
 Show Mailbox Information
 ```powershell
 Get-EXOMailbox -Identity "ncode@ucdavis.edu" -PropertySets All
@@ -69,9 +72,13 @@ Get-DistributionGroup -Identity "coe-ncode-mbx@ad3.ucdavis.edu"
 ```
 ### Configuring a Shared Mailbox
 
-Configure Mailbox to Shared and Sent-As Message Copy
+Configure Mailbox to Shared
 ```powershell
-Set-Mailbox -Identity "ncode@ucdavis.edu" -Type shared -MessageCopyForSentAsEnabled $True
+Set-Mailbox -Identity "ncode@ucdavis.edu" -Type shared
+```
+Set Sent-As Message Copy
+```powershell
+Set-Mailbox -Identity "ncode@ucdavis.edu" -MessageCopyForSentAsEnabled $True
 ```
 Grant Full Mailbox Access to Distribution Group
 ```powershell
@@ -83,5 +90,6 @@ Remove-MailboxPermission -Identity "ncode@ucdavis.edu" -User "coe-ncode-mbx@ad3.
 ```
 Grant Send-As Rights to Distribution Group
 ```powershell
-Add-RecipientPermission -Identity "ncode@ucdavis.edu" -Trustee "coe-ncode-mbx@ad3.ucdavis.edu" -AccessRights SendAs
+#Add-RecipientPermission -Identity "ncode@ucdavis.edu" -Trustee "coe-ncode-mbx@ad3.ucdavis.edu" -AccessRights SendAs
+#Currently not working. Need to work with uConnect admins on the issue
 ```

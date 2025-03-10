@@ -2,7 +2,7 @@
     Title: ad3_shared_mailboxes.ps1
     Authors: Dean Bunn
     Inspired By: Ben Clark
-    Last Edit: 2025-03-07
+    Last Edit: 2025-03-10
 #>
 
 #Command Reference Only Script. Stopping an Accidental Run
@@ -19,6 +19,10 @@ Get-ConnectionInformation
 
 #Close Connection (Run When Done Working with Exchange)
 Disconnect-ExchangeOnline
+
+#######################################
+# Displaying Exchange Item Information
+#######################################
 
 #Show Mailbox Information
 Get-EXOMailbox -Identity "ncode@ucdavis.edu" -PropertySets All
@@ -58,12 +62,15 @@ Get-EXORecipientPermission -Identity "ncode@ucdavis.edu"
 #Show Distribution Group
 Get-DistributionGroup -Identity "coe-ncode-mbx@ad3.ucdavis.edu"
 
-###############################
-#Configuring a Shared Mailbox
-###############################
+########################################
+# Configuring a Shared Mailbox
+########################################
 
-#Configure Mailbox to Shared and Sent-As Message Copy
-Set-Mailbox -Identity "ncode@ucdavis.edu" -Type shared -MessageCopyForSentAsEnabled $True
+#Configure Mailbox to Shared 
+Set-Mailbox -Identity "ncode@ucdavis.edu" -Type shared
+
+#Set Sent-As Message Copy
+Set-Mailbox -Identity "ncode@ucdavis.edu" -MessageCopyForSentAsEnabled $True
 
 #Grant Full Mailbox Access to Distribution Group
 Add-MailboxPermission -Identity "ncode@ucdavis.edu" -User "coe-ncode-mbx@ad3.ucdavis.edu" -AccessRights FullAccess
@@ -72,5 +79,5 @@ Add-MailboxPermission -Identity "ncode@ucdavis.edu" -User "coe-ncode-mbx@ad3.ucd
 Remove-MailboxPermission -Identity "ncode@ucdavis.edu" -User "coe-ncode-mbx@ad3.ucdavis.edu" -AccessRights FullAccess
 
 #Grant Send-As Rights to Distribution Group
-Add-RecipientPermission -Identity "ncode@ucdavis.edu" -Trustee "coe-ncode-mbx@ad3.ucdavis.edu" -AccessRights SendAs
-
+#Add-RecipientPermission -Identity "ncode@ucdavis.edu" -Trustee "coe-ncode-mbx@ad3.ucdavis.edu" -AccessRights SendAs
+#Currently not working. Need to work with uConnect admins on the issue
