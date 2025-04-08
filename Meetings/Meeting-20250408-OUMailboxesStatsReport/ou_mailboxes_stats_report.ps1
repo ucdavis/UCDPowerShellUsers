@@ -5,6 +5,12 @@
     Last Edit: 2025-04-08
 #>
 
+#Import Exchange Online Management Module. See "commands_for_required_module.ps1" If Not Installed
+Import-Module -Name ExchangeOnlineManagement
+
+#Connect to Exchange Online
+Connect-ExchangeOnline
+
 #Var for LDAP Search Path
 [string]$ldapDeptPath = "LDAP://OU=COE-OU-EDO,OU=COE,OU=DEPARTMENTS,DC=ou,DC=ad3,DC=ucdavis,DC=edu";
 
