@@ -2,11 +2,11 @@
     Title: ad3_managed_group_config_box_sync.ps1
     Authors: Dean Bunn
     Inspired By: Ben Clark
-    Last Edit: 2025-05-13
+    Last Edit: 2025-06-11
 #>
 
 #Var for AD3 Managed Group Guid
-[string]$ad3MgrGrpGuid = "8ff259ea-79e4-41d7-8f08-fd3e94c49a82"
+[string]$ad3MgrGrpGuid = "029bc98b-caa4-4f9b-9b6b-3133f3644cfd"
 
 #Import Custom uInform API Module 
 Import-Module .\uInformAPI.psm1
@@ -34,6 +34,6 @@ if([string]::IsNullOrEmpty($UCDAPIInfo.uinform_public_key) -eq $false -and [stri
     }
    
     #Submit Config Box Sync Request to uInform API
-    Submit-uInformAPIAD3ManagedGroupConfigBoxSync -GroupGUID $ad3MgrGrpGuid -GrpExtensionAttr6 "UCDBoxSync" -GrpDisplayName $uCntMngGrp.displayName -GrpDescription $uCntMngGrp.description -GrpMaxMbr $nMaxGrpMbr
+    Submit-uInformAPIAD3ManagedGroupConfigBoxSync -GroupGUID $ad3MgrGrpGuid -GrpExtensionAttr6 "UCDBoxSync" -GrpDisplayName $uCntMngGrp.displayName -GrpDescription $uCntMngGrp.description -GrpMaxMbr $nMaxGrpMbr;
     
 }

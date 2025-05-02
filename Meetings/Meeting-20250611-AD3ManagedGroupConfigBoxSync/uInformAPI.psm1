@@ -61,7 +61,16 @@ function Submit-uInformAPIAD3ManagedGroupConfigBoxSync()
     $cstPutBody.extensionAttribute6 = $GrpExtensionAttr6
     $cstPutBody.displayName = $GrpDisplayName
     $cstPutBody.description = $GrpDescription
-    $cstPutBody.maxMembers = $GrpMaxMbr
+
+    #Quick Check for Null or Empty Max Number
+    if($null -ne $GrpMaxMbr -and $GrpMaxMbr -ne 0)
+    {
+        $cstPutBody.maxMembers = $GrpMaxMbr;
+    }
+    else 
+    {
+        $cstPutBody.maxMembers = $null;
+    }
     
     #Convert Post Body to Json Object
     $jsonPutBody = $cstPutBody | ConvertTo-Json -Compress;
