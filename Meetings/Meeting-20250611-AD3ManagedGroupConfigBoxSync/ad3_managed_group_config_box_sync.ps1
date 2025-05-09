@@ -6,7 +6,7 @@
 #>
 
 #Var for AD3 Managed Group Guid
-[string]$ad3MgrGrpGuid = "029bc98b-caa4-4f9b-9b6b-3133f3644cfd"
+[string]$ad3MgrGrpGuid = "447fde57-4375-4112-ae18-c99605409c21"
 
 #Import Custom uInform API Module 
 Import-Module .\uInformAPI.psm1

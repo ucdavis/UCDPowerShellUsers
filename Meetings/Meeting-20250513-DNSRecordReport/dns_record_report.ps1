@@ -20,8 +20,14 @@ $arrComputerOUs = @("OU=COE-MAE-CAElab,OU=COE-OU-MAE-Instr,OU=COE-OU-MAE,OU=COE,
 #Array for Custom Reporting Objects
 $arrRptComputers = @();
 
+#Array for Custom Reporting No DNS Records
+$arrRptNoDNSRecords = @();
+
 #Var for Report Name
 [string]$rptName = "DNS_Record_Report_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv";
+
+#Var for No DNS Record Report Name
+[string]$rptNameNoDNS = "No_DNS_Record_Report_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv";
 
 #Go Through Each Submitted OU
 foreach($dnComputerOU in $arrComputerOUs)
@@ -82,6 +88,23 @@ foreach($dnComputerOU in $arrComputerOUs)
 
                 }#End of $arrDNSRecords Foreach
 
+            }
+            else 
+            {
+                
+                #Create Custom Reporting Object for No DNS Record
+                $cstNoDNS = [PSCustomObject]@{
+                                                ComputerName    = $adCmptr.Name
+                                                DNSHostName     = $adCmptr.DNSHostName
+                                                OSName          = $adCmptr.OperatingSystem
+                                                WhenCreated     = $adCmptr.whenCreated
+                                                DN              = $adCmptr.DistinguishedName
+                                                LastLoginTS     = $dtLastLoginTimeStamp.ToString()
+                };
+
+                #Add Custom Object to No DNS Reporting Array
+                $arrRptNoDNSRecords += $cstNoDNS;
+
             }#End of Null\Empty Check on DNS Records
 
         }#End of Null\Empty Checks on DNS Host Name
@@ -93,7 +116,8 @@ foreach($dnComputerOU in $arrComputerOUs)
 #Export Reporting Array to CSV
 $arrRptComputers | Sort-Object -Property ComputerName | Select-Object -Property ComputerName,DNSHostName,OSName,WhenCreated,Modified,LastLoginTS,IPAddress,IPAddrTimeStamp,DNSRecordOld,DN | Export-Csv -Path $rptName -NoTypeInformation;
 
-
+#Export No DNS Listing to CSV
+$arrRptNoDNSRecords | Sort-Object -Property ComputerName | Select-Object -Property ComputerName,DNSHostName,OSName,WhenCreated,LastLoginTS,DN | Export-Csv -Path $rptNameNoDNS -NoTypeInformation;
 
 
 
