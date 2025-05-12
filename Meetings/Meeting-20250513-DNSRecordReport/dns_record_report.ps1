@@ -9,7 +9,9 @@ Import-Module ActiveDirectory,DnsServer;
 
 #Array of Computer OU Paths
 $arrComputerOUs = @("OU=COE-MAE-CAElab,OU=COE-OU-MAE-Instr,OU=COE-OU-MAE,OU=COE,OU=DEPARTMENTS,DC=ou,DC=ad3,DC=ucdavis,DC=edu",
-                    "OU=COE-EDO-Staff,OU=COE-OU-EDO,OU=COE,OU=DEPARTMENTS,DC=ou,DC=ad3,DC=ucdavis,DC=edu");
+                    "OU=COE-OU-CEE-Instruction,OU=COE-OU-CEE,OU=COE,OU=DEPARTMENTS,DC=ou,DC=ad3,DC=ucdavis,DC=edu",
+                    "OU=COE-ECE-KEMPER,OU=COE-OU-ECE-Instr,OU=COE-OU-ECE,OU=COE,OU=DEPARTMENTS,DC=ou,DC=ad3,DC=ucdavis,DC=edu",
+                    "OU=COE-BAE-Instr,OU=COE-OU-BAE,OU=COE,OU=DEPARTMENTS,DC=ou,DC=ad3,DC=ucdavis,DC=edu");
 
 #Var for AD DNS Server 
 [string]$dnsADServer = "128.120.42.42";
