@@ -15,5 +15,6 @@ Install-WindowsFeature -ComputerName localhost -Name 'RSAT-AD-PowerShell','RSAT-
 1. Look up all enabled computers in each listed OU path
 2. Pull the last login timestamp of each computer
 3. Pull DNS A records for each computer
-4. Create CSV reports. One of active computers with DNS records and the other of computers without a DNS record
+4. Compare dates on DNS records with last login timestamp
+5. Create CSV reports. One of active computers with DNS records and the other of computers without a DNS record
 
