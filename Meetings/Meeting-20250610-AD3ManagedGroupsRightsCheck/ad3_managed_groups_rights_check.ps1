@@ -1,7 +1,7 @@
 <#
     Title: ad3_managed_groups_rights_check.ps1
     Authors: Dean Bunn
-    Inspired By: Reuben Castelino
+    Inspired By: Reuben Castelino and Ben Clark
     Last Edit: 2025-06-10
 #>
 
@@ -28,6 +28,12 @@ $htCAGuids = @{};
 
 #HashTable for Other Admin's Managed Groups GUIDs
 $htOAGuids = @{};
+
+#Array for Custom Reporting Objects
+$arrRptMngGrpsMissingRights = @();
+
+#Var for Report Name
+[string]$rptName = "Managed_Groups_Missing_Access_Rights_Report_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv";
 
 #Intitiate Directory Searcher
 [DirectoryServices.DirectorySearcher]$dsSearcher = New-Object DirectoryServices.DirectorySearcher($deADRoot);
@@ -162,25 +168,40 @@ if($htCAGuids.Count -gt 0)
 #Check for Groups to Report On
 if($htOAGuids.Count -gt 0)
 {
+
     #Loop Through Remaining Other Admin Managed Group Guids and Report Them Out
     foreach($oaGUID in $htOAGuids.Keys)
     {
-        Write-Output $oaGUID;
-        ####################
-        #Lookup Group and Report Name and GUID
-        ####################
-        #Pull Other Admin Group Membership
-        #[string]$ldapPathAdminGrp = $dmnLDAPPathPrefixGuidLookup + $admGrpGuid + ">";
+        
+        #Var for LDAP Path to Managed Group that Other Admins Have Rights To
+        [string]$ldapPathOAManagedGrp = $dmnLDAPPathPrefixGuidLookup + $oaGUID + ">";
     
         #Directory Entry for Admin Group
-        #[DirectoryServices.DirectoryEntry]$deAdminGrp = New-Object DirectoryServices.DirectoryEntry($ldapPathAdminGrp);
+        [DirectoryServices.DirectoryEntry]$deOAMngdGrp = New-Object DirectoryServices.DirectoryEntry($ldapPathOAManagedGrp);
 
+        #Null Check on No Access Rights Group
+        if($null -ne $deOAMngdGrp -and $deOAMngdGrp.Properties["cn"].Count -gt 0)
+        {
+            #Create Custom Reporting Object for Managed Group Comparison Admin doesn't have access to
+            $cstMngGrp = [PSCustomObject]@{
+                                            Guid       = $deOAMngdGrp.Guid.ToString()
+                                            GroupName  = $deOAMngdGrp.Properties["cn"][0]
+                                          };
+            
+            #Add Custom Object to Reporting Array
+            $arrRptMngGrpsMissingRights += $cstMngGrp;
+
+        }#End of Null Check on No Access Rights Group
+        
     }#End of $htOAGuids.Keys Foreach
 
 }#End of $htOAGuids Count Check
 
 #Close Out Directory Entry for Root Domain
 $deADRoot.Close();
+
+#Export Report
+$arrRptMngGrpsMissingRights | Sort-Object -Property GroupName | Select-Object -Property Guid,GroupName | Export-Csv -Path $rptName -NoTypeInformation;
 
 #C:\Users\dbunn\source\repos\UCDPowerShellUsers\Meetings\Meeting-20250610-AD3ManagedGroupsRightsCheck
 
