@@ -99,21 +99,85 @@ if($srUICA.Properties["distinguishedName"].Count -gt 0)
     #Null Check on Admin Group Directory Entry
     if($null -ne $deAdminGrp -and $deAdminGrp.Properties["member"].Count -gt 0)
     {
-       foreach($dnAdmGrpMbr in $deAdminGrp.Properties["member"])
-       {
-            Write-Output $dnAdmGrpMbr;
-       }
-    }
+        #Loop Through Each Admin Group Member and Pull There Management Groups
+        foreach($dnAdmGrpMbr in $deAdminGrp.Properties["member"])
+        {
+            #Set Search Filter to Look for All Groups Admin User is a Member of in the Management OU
+            $dsSearcher.Filter = "(&(objectclass=group)(member:1.2.840.113556.1.4.1941:=" + $dnAdmGrpMbr.ToString() + "))";
+        
+            #Search for Management Group Membership
+            [DirectoryServices.SearchResultCollection]$srchRlstColltOtherAdminsMngtGrps = $dsSearcher.FindAll();
+
+            #Null\Empty Check on Admin Account Group Membership
+            if($null -ne $srchRlstColltOtherAdminsMngtGrps -and $srchRlstColltOtherAdminsMngtGrps.Count -gt 0)
+            {
+                #Loop Through Search Results of Other Admins Management Manage Groups
+                foreach($srchRlstOMG in $srchRlstColltOtherAdminsMngtGrps)
+                {
+                    #Pull Associated Management Group Guid to Add to HashTable
+                    if($srchRlstOMG.Properties["extensionAttribute2"].Count -gt 0)
+                    {
+                        #Var for Associated Management Group Guid
+                        [string]$strGuidMngGrp = $srchRlstOMG.Properties["extensionAttribute2"][0].ToString().Trim();
+
+                        #Add Associated Management Group Guid to Comparison Admin HashTable
+                        if($htOAGuids.ContainsKey($strGuidMngGrp) -eq $false)
+                        {
+                            $htOAGuids.Add($strGuidMngGrp,"1");
+                        }
+
+                    }#End of Associated Management Group Extension Attribute Check
+
+                }#End of $srchRlstColltOtherAdminsMngtGrps Foreach
+
+            }#End of Null\Empty Check on $srchRlstColltOtherAdminsMngtGrps
+
+       }#End of Foreach On Admin Accounts Group Membership
+
+    }#End of Null\Empty Check on Admin Group
     
     #Close Out Directory Entry for Admin Group
     $deAdminGrp.Close();
     
-    
-
     #Close Out Directory Entry for Management Manage Groups OU
     $deMngmntMngGroupsOU.Close();
 
 }#End of Admin Account Comparison Account Lookup
+
+#Determine Which Groups Comparison Admin is Not an Owner or Manager On. 
+if($htCAGuids.Count -gt 0)
+{
+    #Loop Through Comparison Admin Groups and Remove Guids In Other Guids HashTable
+    foreach($caGUID in $htCAGuids.Keys)
+    {
+        if($htOAGuids.ContainsKey($caGUID) -eq $true)
+        {
+            $htOAGuids.Remove($caGUID);
+        }
+
+    }#End of $htCAGuids.Keys Foreach
+
+}#End of Comparison HashTable Checks
+
+#Check for Groups to Report On
+if($htOAGuids.Count -gt 0)
+{
+    #Loop Through Remaining Other Admin Managed Group Guids and Report Them Out
+    foreach($oaGUID in $htOAGuids.Keys)
+    {
+        Write-Output $oaGUID;
+        ####################
+        #Lookup Group and Report Name and GUID
+        ####################
+        #Pull Other Admin Group Membership
+        #[string]$ldapPathAdminGrp = $dmnLDAPPathPrefixGuidLookup + $admGrpGuid + ">";
+    
+        #Directory Entry for Admin Group
+        #[DirectoryServices.DirectoryEntry]$deAdminGrp = New-Object DirectoryServices.DirectoryEntry($ldapPathAdminGrp);
+
+    }#End of $htOAGuids.Keys Foreach
+
+}#End of $htOAGuids Count Check
 
 #Close Out Directory Entry for Root Domain
 $deADRoot.Close();
