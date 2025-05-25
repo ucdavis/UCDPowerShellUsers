@@ -2,6 +2,7 @@
 
 ### Meetings
 
+- [2025-06-10 AD3 Managed Groups Rights Check](Meetings/Meeting-20250610-AD3ManagedGroupsRightsCheck)
 - [2025-05-13 DNS Record Report](Meetings/Meeting-20250513-DNSRecordReport)
 - [2025-04-08 OU Mailboxes Stats Report](Meetings/Meeting-20250408-OUMailboxesStatsReport)
 - [2025-04-08 AD3 Shared Mailboxes](Meetings/Meeting-20250408-AD3SharedMailboxes)

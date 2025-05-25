@@ -186,6 +186,7 @@ if($htOAGuids.Count -gt 0)
             $cstMngGrp = [PSCustomObject]@{
                                             Guid       = $deOAMngdGrp.Guid.ToString()
                                             GroupName  = $deOAMngdGrp.Properties["cn"][0]
+                                            GroupLink  = "https://admin.uinform.ucdavis.edu/GroupManagement/Details/" + $deOAMngdGrp.Guid.ToString()
                                           };
             
             #Add Custom Object to Reporting Array
@@ -200,8 +201,12 @@ if($htOAGuids.Count -gt 0)
 #Close Out Directory Entry for Root Domain
 $deADRoot.Close();
 
-#Export Report
-$arrRptMngGrpsMissingRights | Sort-Object -Property GroupName | Select-Object -Property Guid,GroupName | Export-Csv -Path $rptName -NoTypeInformation;
+#Export Report to Local Directory
+$arrRptMngGrpsMissingRights | Sort-Object -Property GroupName | Select-Object -Property Guid,GroupName,GroupLink | Export-Csv -Path $rptName -NoTypeInformation;
+
+#Display Report 
+$arrRptMngGrpsMissingRights | Sort-Object -Property GroupName | Select-Object -Property Guid,GroupName
+
 
 #C:\Users\dbunn\source\repos\UCDPowerShellUsers\Meetings\Meeting-20250610-AD3ManagedGroupsRightsCheck
 
