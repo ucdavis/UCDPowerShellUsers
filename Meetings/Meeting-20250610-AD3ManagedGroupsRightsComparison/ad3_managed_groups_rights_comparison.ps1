@@ -1,5 +1,5 @@
 <#
-    Title: ad3_managed_groups_rights_check.ps1
+    Title: ad3_managed_groups_rights_comparison.ps1
     Authors: Dean Bunn
     Inspired By: Reuben Castelino and Ben Clark
     Last Edit: 2025-06-10
@@ -207,8 +207,6 @@ $arrRptMngGrpsMissingRights | Sort-Object -Property GroupName | Select-Object -P
 #Display Report 
 $arrRptMngGrpsMissingRights | Sort-Object -Property GroupName | Select-Object -Property Guid,GroupName
 
-
-#C:\Users\dbunn\source\repos\UCDPowerShellUsers\Meetings\Meeting-20250610-AD3ManagedGroupsRightsCheck
 
 
 
