@@ -1,12 +1,11 @@
 ## AD3 Managed Groups Rights Check
 
-A script to quickly determine the AD3 managed groups one admin account doesn't have owner or manager rights to modify. 
+A script to quickly determine the AD3 managed groups one user account doesn't have owner or manager rights to modify. 
 
 ### Script Summary
 
-- Pull the AD3 Managed groups that a comparison admin account has owner or manager rights on
-- Then retreive all the members of a specified AD group consisting of other AD3 admins accounts
-- Pull all the AD3 Managed groups each of the other admins have access to modify
+- Pull the AD3 managed groups that a comparison account has owner or manager rights on
+- Then retreive all the AD3 managed groups the individual benchmark user or members of the benchmark AD3 group have owner or manager rights on
 - Compare the two listings and report out groups the comparison admin needs access to configure
 
 ### Requirements
