@@ -2,6 +2,7 @@
 
 ### Meetings
 
+- [2025-07-08 Find HS Users Split Appointments](Meetings/Meeting-20250708-Find-HS-Split-Appointments/)
 - [2025-06-10 AD3 Managed Groups Rights Comparison](Meetings/Meeting-20250610-AD3ManagedGroupsRightsComparison)
 - [2025-05-13 DNS Record Report](Meetings/Meeting-20250513-DNSRecordReport)
 - [2025-04-08 OU Mailboxes Stats Report](Meetings/Meeting-20250408-OUMailboxesStatsReport)
