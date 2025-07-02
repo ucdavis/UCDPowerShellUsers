@@ -1,5 +1,7 @@
 <#
-    script: find-hs-split-appointments.ps1
+    Title: find-hs-split-appointments.ps1
+    Authors: Ben Clark and Dean Bunn
+    Last Edit: 2025-07-08
 #>
 
 #Var for IAM Payroll Department Code
@@ -14,7 +16,7 @@ $dsSearcher.SearchScope = [DirectoryServices.SearchScope]::Subtree;
 $dsSearcher.PageSize = 900;
 [void]$dsSearcher.PropertiesToLoad.Add("sAMAccountName");
 [void]$dsSearcher.PropertiesToLoad.Add("userPrincipalName");
-[void]$dsSearcher.PropertiesToLoad.Add("DisplayName");
+[void]$dsSearcher.PropertiesToLoad.Add("displayName");
 [void]$dsSearcher.PropertiesToLoad.Add("extensionAttribute14");
 [void]$dsSearcher.PropertiesToLoad.Add("extensionAttribute9");
 
@@ -30,7 +32,7 @@ foreach($srchRslt in $srchRlstHealthMembers)
     if($srchRslt.Properties["extensionAttribute14"][0].ToString().Trim().ToLower() -ne ";hs")
     {
         [string]$HSUser = "User ID: " + $srchRslt.Properties["sAMAccountName"][0].ToString().ToLower() + `
-                      ", Display Name: " + $srchRslt.Properties["DisplayName"][0].ToString() + `
+                      ", Display Name: " + $srchRslt.Properties["displayName"][0].ToString() + `
                       ", UPN: " + $srchRslt.Properties["userPrincipalName"][0].ToString().ToLower();
 
         Write-Output $HSUser;
