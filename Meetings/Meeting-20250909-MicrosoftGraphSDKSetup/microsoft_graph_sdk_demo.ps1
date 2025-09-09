@@ -30,3 +30,6 @@ Get-MgGroupMember -GroupId (Get-MgGroup -Filter "displayName eq 'COE-US-IT'").Id
 
 #View Individual User's Group Membership
 Get-MgUserMemberOf -UserId (Get-MgUser -UserId 'dbunn@ucdavis.edu').Id -All | ForEach-Object { Get-MgGroup -GroupId $_.Id } | Select-Object Id,DisplayName,Description | Sort-Object DisplayName | Format-Table -AutoSize
+
+#View Non Compliant Managed Devices and their Users
+Get-MgDeviceManagementManagedDevice -Filter "startswith(deviceName,'coe-') and ComplianceState eq 'noncompliant'" | Select-Object ComplianceState,DeviceName,DeviceEnrollmentType,EmailAddress
