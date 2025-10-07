@@ -1,24 +1,36 @@
 <#
     Title: aws_tools_s3.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2025-08-12
+    Last Edit: 2025-10-07
 #>
 
 #Stopping an Accidental Run
 Exit;
 
-#Install AWS PowerShell Module
-Install-Module -Name AWSPowerShell.NetCore -Scope CurrentUser;
+#Install AWS Tools Installer Module
+Install-Module -Name AWS.Tools.Installer -Scope CurrentUser
 
 #Check to See If Module was Successfully Installed
 Get-Module -ListAvailable;
 
-#Import AWS PowerShell Module
-Import-Module -Name AWSPowerShell.NetCore
+#Install AWS Tools Common Module Using AWS Tools Installer
+Install-AWSToolsModule AWS.Tools.Common -CleanUp
 
-#Get AWS PowerShell Version
-Get-AWSPowerShellVersion -ListServiceVersionInfo
+#Get AWS PowerShell Version and View More Extensive List of AWS PowerShell Module Names
+Get-AWSPowerShellVersion -ListServiceVersionInfo | Format-Table -AutoSize
 
+#Install Various AWS Modules
+Install-AWSToolsModule AWS.Tools.S3,AWS.Tools.RDS,AWS.Tools.APIGateway,AWS.Tools.EC2,AWS.Tools.Lambda -CleanUp
+
+#AWS.Tools.APIGateway
+#AWS.Tools.EC2
+#AWS.Tools.Lambda
+#AWS.Tools.RDS
+#AWS.Tools.S3
+
+#Update Installed AWS Tools Modules
+Update-AWSToolsModule -CleanUp
+   
 #Get List of AWS Regions
 Get-AWSRegion; 
 

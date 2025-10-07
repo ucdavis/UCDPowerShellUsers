@@ -10,11 +10,13 @@ Installing the AWS Tools for PowerShell and working with S3 data.
 
 [Cloud UC Davis](https://cloud.ucdavis.edu/)
 
+[Installed AWS Tools for PowerShell on AWS CloudShell](https://docs.aws.amazon.com/powershell/v5/userguide/pstools-getting-set-up-cloudshell.html)
+
 ### Commands
 
-Install AWS PowerShell Module
+Install AWS Tools Installer Module
 ```powershell
-Install-Module -Name AWSPowerShell.NetCore -Scope CurrentUser;
+Install-Module -Name AWS.Tools.Installer -Scope CurrentUser
 ```
 
 Check to See If Module was Successfully Installed
@@ -22,14 +24,30 @@ Check to See If Module was Successfully Installed
 Get-Module -ListAvailable;
 ```
 
-Import AWS PowerShell Module
+Install AWS Tools Common Module Using AWS Tools Installer
 ```powershell
-Import-Module -Name AWSPowerShell.NetCore;
+Install-AWSToolsModule AWS.Tools.Common -CleanUp
 ```
 
-Get AWS PowerShell Version
+Get AWS PowerShell Version and View More Extensive List of AWS PowerShell Module Names
 ```powershell
 Get-AWSPowerShellVersion -ListServiceVersionInfo;
+```
+
+Install Various AWS Modules
+```powershell
+Install-AWSToolsModule AWS.Tools.S3,AWS.Tools.RDS,AWS.Tools.APIGateway,AWS.Tools.EC2,AWS.Tools.Lambda -CleanUp
+
+#AWS.Tools.APIGateway
+#AWS.Tools.EC2
+#AWS.Tools.Lambda
+#AWS.Tools.RDS
+#AWS.Tools.S3
+```
+
+Update Installed AWS Tools Modules
+```powershell
+Update-AWSToolsModule -CleanUp
 ```
 
 Get List of AWS Regions
