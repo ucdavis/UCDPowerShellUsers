@@ -1,7 +1,7 @@
 <#
     Title: aws_tools_s3.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2025-10-07
+    Last Edit: 2025-10-08
 #>
 
 #Stopping an Accidental Run
@@ -30,6 +30,9 @@ Install-AWSToolsModule AWS.Tools.S3,AWS.Tools.RDS,AWS.Tools.APIGateway,AWS.Tools
 
 #Update Installed AWS Tools Modules
 Update-AWSToolsModule -CleanUp
+
+#View Commands Listed in a Module
+Get-Command -Module AWS.Tools.Common
    
 #Get List of AWS Regions
 Get-AWSRegion; 
@@ -47,19 +50,19 @@ Set-AWSCredential -AccessKey BIGACCESSKEYSTRING -SecretKey VeryLongSecretKey -St
 Get-AWSCredential -ListProfileDetail; 
 
 #View S3 Buckets
-Get-S3Bucket -ProfileName engr-viewer;
+Get-S3Bucket -ProfileName engr-psdemo;
 
 #Get S3 Bucket Location
-Get-S3Bucket -ProfileName engr-viewer | Get-S3BucketLocation -ProfileName engr-viewer
+Get-S3Bucket -BucketName "engr-it" -ProfileName engr-psdemo | Get-S3BucketLocation -ProfileName engr-psdemo
 
 #Get All Items in S3 Bucket
-Get-S3Bucket -ProfileName engr-viewer | Get-S3Object -ProfileName engr-viewer
+Get-S3Bucket -BucketName "engr-it" -ProfileName engr-psdemo | Get-S3Object -ProfileName engr-psdemo
 
 #Get Bucket ACL
-Get-S3BucketACL -BucketName "engr-it" -ProfileName engr-viewer
+Get-S3BucketACL -BucketName "engr-it" -ProfileName engr-psdemo
 
 #Upload File to S3 Bucket
-Write-S3Object -BucketName "engr-it" -File "C:\COEDevExport\MAE257-Spring2025.mp4" -Key "Videos/MAE257-Week1-Spring2025.mp4" -ProfileName engr-uploader
+Write-S3Object -BucketName "engr-it" -File "C:\COEDevExport\UCD-PowerShell-Users\important-recording-01.mp4" -Key "Videos/important-recording-01.mp4" -ProfileName engr-psdemo
 
 #Upload Folder to S3 Bucket
-Write-S3Object -BucketName "engr-it" -Folder "C:\COEDevExport\PowerShellUsersGroup" -KeyPrefix "PSUGroup" -Recurse -ProfileName engr-uploader
+Write-S3Object -BucketName "engr-it" -Folder "C:\COEDevExport\UCD-PowerShell-Users" -KeyPrefix "PSUGroup" -Recurse -ProfileName engr-psdemo

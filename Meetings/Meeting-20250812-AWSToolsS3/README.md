@@ -31,24 +31,31 @@ Install-AWSToolsModule AWS.Tools.Common -CleanUp
 
 Get AWS PowerShell Version and View More Extensive List of AWS PowerShell Module Names
 ```powershell
-Get-AWSPowerShellVersion -ListServiceVersionInfo;
+Get-AWSPowerShellVersion -ListServiceVersionInfo | Format-Table -AutoSize
 ```
 
 Install Various AWS Modules
 ```powershell
 Install-AWSToolsModule AWS.Tools.S3,AWS.Tools.RDS,AWS.Tools.APIGateway,AWS.Tools.EC2,AWS.Tools.Lambda -CleanUp
-
-#AWS.Tools.APIGateway
-#AWS.Tools.EC2
-#AWS.Tools.Lambda
-#AWS.Tools.RDS
-#AWS.Tools.S3
+```
+```powershell
+# AWS.Tools.APIGateway
+# AWS.Tools.EC2
+# AWS.Tools.Lambda
+# AWS.Tools.RDS
+# AWS.Tools.S3
 ```
 
 Update Installed AWS Tools Modules
 ```powershell
 Update-AWSToolsModule -CleanUp
 ```
+
+View Commands Listed in a Module
+```powershell
+Get-Command -Module AWS.Tools.Common
+```
+
 
 Get List of AWS Regions
 ```powershell
@@ -67,7 +74,7 @@ Get-DefaultAWSRegion;
 
 Set AWS Credentials
 ```powershell
-Set-AWSCredential -AccessKey BIGACCESSKEYSTRING -SecretKey VeryLongSecretKey -StoreAs engr-demo
+Set-AWSCredential -AccessKey BIGACCESSKEYSTRING -SecretKey VeryLongSecretKey -StoreAs engr-psdemo
 ```
 
 Get List of AWS Credentials 
@@ -77,25 +84,25 @@ Get-AWSCredential -ListProfileDetail;
 
 View S3 Buckets 
 ```powershell
-Get-S3Bucket -ProfileName engr-viewer;
+Get-S3Bucket -ProfileName engr-psdemo;
 ```
 
 Get S3 Bucket Location
 ```powershell
-Get-S3Bucket -ProfileName engr-viewer | Get-S3BucketLocation -ProfileName engr-viewer
+Get-S3Bucket -BucketName "engr-it" -ProfileName engr-psdemo | Get-S3BucketLocation -ProfileName engr-psdemo
 ```
 
 Get All Items in S3 Bucket 
 ```powershell
-Get-S3Bucket -ProfileName engr-viewer | Get-S3Object -ProfileName engr-viewer
+Get-S3Bucket -BucketName "engr-it" -ProfileName engr-psdemo | Get-S3Object -ProfileName engr-psdemo
 ```
 
 Upload File to S3 Bucket
 ```powershell
-Write-S3Object -BucketName "engr-it" -File "C:\COEDevExport\MAE257-Spring2025.mp4" -Key "Videos/MAE257-Week1-Spring2025.mp4" -ProfileName engr-uploader;
+Write-S3Object -BucketName "engr-it" -File "C:\COEDevExport\UCD-PowerShell-Users\important-recording-01.mp4" -Key "Videos/important-recording-01.mp4" -ProfileName engr-psdemo;
 ```
 
 Upload Folder to S3 Bucket 
 ```powershell
-Write-S3Object -BucketName "engr-it" -Folder "C:\COEDevExport\PowerShellUsersGroup" -KeyPrefix "PSUGroup" -Recurse -ProfileName engr-uploader;
+Write-S3Object -BucketName "engr-it" -Folder "C:\COEDevExport\UCD-PowerShell-Users" -KeyPrefix "PSUGroup" -Recurse -ProfileName engr-psdemo;
 ```
