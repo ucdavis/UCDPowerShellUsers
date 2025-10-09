@@ -19,7 +19,12 @@ Install AWS Tools Installer Module
 Install-Module -Name AWS.Tools.Installer -Scope CurrentUser
 ```
 
-Check to See If Module was Successfully Installed
+View Installed Modules
+```powershell
+Get-InstalledModule 
+```
+
+View Full List of Available Modules
 ```powershell
 Get-Module -ListAvailable;
 ```
@@ -41,6 +46,7 @@ Install-AWSToolsModule AWS.Tools.S3,AWS.Tools.RDS,AWS.Tools.APIGateway,AWS.Tools
 ```powershell
 # AWS.Tools.APIGateway
 # AWS.Tools.EC2
+# AWS.Tools.Glacier
 # AWS.Tools.Lambda
 # AWS.Tools.RDS
 # AWS.Tools.S3
@@ -55,7 +61,6 @@ View Commands Listed in a Module
 ```powershell
 Get-Command -Module AWS.Tools.Common
 ```
-
 
 Get List of AWS Regions
 ```powershell
@@ -102,7 +107,28 @@ Upload File to S3 Bucket
 Write-S3Object -BucketName "engr-it" -File "C:\COEDevExport\UCD-PowerShell-Users\important-recording-01.mp4" -Key "Videos/important-recording-01.mp4" -ProfileName engr-psdemo;
 ```
 
+Upload File to S3 Bucket Using Glacier Storage
+```powershell
+Write-S3Object -BucketName "engr-it" -File "C:\COEDevExport\UCD-PowerShell-Users\important-recording-01.mp4" -Key "VideoArchive/important-recording-01.mp4" -StorageClass GLACIER -ProfileName engr-psdemo
+```
+```powershell
+# Storage Classes
+# GLACIER_IR = Glacier Instant Retrieval
+# GLACIER = Glacier Flexible Retrieval
+# DEEP_ARCHIVE = Glacier Deep Archive
+```
+
 Upload Folder to S3 Bucket 
 ```powershell
 Write-S3Object -BucketName "engr-it" -Folder "C:\COEDevExport\UCD-PowerShell-Users" -KeyPrefix "PSUGroup" -Recurse -ProfileName engr-psdemo;
+```
+
+Create New S3 Bucket
+```powershell
+New-S3Bucket -BucketName "psdemo-archive" -ProfileName engr-psdemo
+```
+
+View Old Glacier Vaults
+```powershell
+Get-GLCVaultList -ProfileName engr-psdemo
 ```
