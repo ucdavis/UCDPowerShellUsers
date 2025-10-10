@@ -79,8 +79,41 @@ $cstRDS = [PSCustomObject]@{
             		        }
 $cstRDS | Select-Object -Property DBIdentifier,DBInstanceStatus,DBInstanceClass,Engine,EngineVersion,LatestRestorableTime,PubliclyAccessible,EndPointAddress,EndPointPort } | Format-Table -AutoSize
 
+#Custom View of RDS DB Instance Ping Status
+ Get-RDSDBInstance -ProfileName engr-psdemo | Foreach-Object { 
+ $cstRDSPingStatus = [PSCustomObject]@{ 
+ 			                            DBInstanceIdentifier = $_.DBInstanceIdentifier
+ 				                        EndPointAddress      = $_.EndPoint.Address
+ 				                        EndPointPort         = $_.EndPoint.Port
+ 				                        PingPortStatus       = (Test-Connection -ComputerName $_.EndPoint.Address -TcpPort $_.EndPoint.Port)
+ 				                      }
+ $cstRDSPingStatus | Select-Object -Property DBInstanceIdentifier,EndPointAddress,EndPointPort,PingPortStatus } | Format-Table -AutoSize
+
+
 #View RDS DB Snapshots
 Get-RDSDBSnapshot -ProfileName engr-psdemo | Select-Object -Property DBInstanceIdentifier,DBSnapshotIdentifier,Engine,EngineVersion,SnapshotCreateTime,SnapshotType | Format-Table -AutoSize
 
 
+#View All Lambda Module Commands
+Get-Command -Module AWS.Tools.Lambda 
+
+#View Lambda Functions
+Get-LMFunctionList -ProfileName engr-psdemo
+
+#View Basics of Individual Lambda Function Objects
+Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-psdemo
+
+#View Configuration of Lambda Functions
+Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-psdemo | Foreach-Object { $_.Configuration } | Format-List
+
+#View Code Download Links for Lambda Functions
+Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-psdemo | Foreach-Object { $_.Code } | Format-List
+
+#Download Zip File of Related Code for Lambda Functions
+Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-psdemo | Foreach-Object { 
+		if([string]::IsNullOrEmpty($_.Code.Location) -eq $false)
+		{
+		    Invoke-RestMethod -Uri $_.Code.Location -OutFile ($_.Configuration.FunctionName + ".zip")
+		}
+}
 
