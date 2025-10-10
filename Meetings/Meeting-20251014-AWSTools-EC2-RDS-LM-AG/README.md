@@ -162,3 +162,33 @@ Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-p
 		}
 }
 ```
+
+View All AWS API Gateway Module Commands
+```powershell
+Get-Command -Module AWS.Tools.APIGateway
+```
+
+View List of Rest APIs
+```powershell
+Get-AGRestAPIList -ProfileName engr-psdemo
+```
+
+View Rest APIs Resources (still a work in progress)
+```powershell
+Get-AGRestAPIList -ProfileName engr-psdemo | Foreach-Object { Get-AGResourceList -RestApiId $_.Id -ProfileName engr-psdemo } | Format-Table 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 <#
     Title: aws_tools_ec2_rds_lm_ag.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2025-10-09
+    Last Edit: 2025-10-10
 #>
 
 #Stopping an Accidental Run
@@ -94,7 +94,7 @@ $cstRDS | Select-Object -Property DBIdentifier,DBInstanceStatus,DBInstanceClass,
 Get-RDSDBSnapshot -ProfileName engr-psdemo | Select-Object -Property DBInstanceIdentifier,DBSnapshotIdentifier,Engine,EngineVersion,SnapshotCreateTime,SnapshotType | Format-Table -AutoSize
 
 
-#View All Lambda Module Commands
+#View All AWS Lambda Module Commands
 Get-Command -Module AWS.Tools.Lambda 
 
 #View Lambda Functions
@@ -116,4 +116,25 @@ Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-p
 		    Invoke-RestMethod -Uri $_.Code.Location -OutFile ($_.Configuration.FunctionName + ".zip")
 		}
 }
+
+
+#View All AWS API Gateway Module Commands
+Get-Command -Module AWS.Tools.APIGateway
+
+#View List of Rest APIs
+Get-AGRestAPIList -ProfileName engr-psdemo
+
+#View Rest APIs Resources
+Get-AGRestAPIList -ProfileName engr-psdemo | Foreach-Object { Get-AGResourceList -RestApiId $_.Id -ProfileName engr-psdemo } | Format-Table  
+
+
+
+
+
+
+
+
+
+
+
 
