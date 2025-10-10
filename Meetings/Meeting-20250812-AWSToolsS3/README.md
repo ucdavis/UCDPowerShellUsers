@@ -99,7 +99,7 @@ Get-S3Bucket -BucketName "engr-it" -ProfileName engr-psdemo | Get-S3BucketLocati
 
 Get All Items in S3 Bucket 
 ```powershell
-Get-S3Bucket -BucketName "engr-it" -ProfileName engr-psdemo | Get-S3Object -ProfileName engr-psdemo
+Get-S3Object -BucketName "engr-it" -ProfileName engr-psdemo
 ```
 
 Upload File to S3 Bucket

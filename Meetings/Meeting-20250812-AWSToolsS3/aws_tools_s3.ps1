@@ -60,7 +60,7 @@ Get-S3Bucket -ProfileName engr-psdemo;
 Get-S3Bucket -BucketName "engr-it" -ProfileName engr-psdemo | Get-S3BucketLocation -ProfileName engr-psdemo
 
 #Get All Items in S3 Bucket
-Get-S3Bucket -BucketName "engr-it" -ProfileName engr-psdemo | Get-S3Object -ProfileName engr-psdemo
+Get-S3Object -BucketName "engr-it" -ProfileName engr-psdemo
 
 #Get Bucket ACL
 Get-S3BucketACL -BucketName "engr-it" -ProfileName engr-psdemo
