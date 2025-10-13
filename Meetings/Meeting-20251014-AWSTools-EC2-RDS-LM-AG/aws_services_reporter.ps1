@@ -82,10 +82,10 @@ $arrRDSReporter | Select-Object -Property DBIdentifier,DBInstanceStatus,DBInstan
 $arrRDSReporter | Select-Object -Property DBIdentifier,DBInstanceStatus,DBInstanceClass,Engine,EngineVersion,LatestRestorableTime,PubliclyAccessible,EndPointAddress,EndPointPort | Format-Table -AutoSize
 
 #Export Lambda Function Basic Information to CSV
-Get-LMFunctionList -ProfileName engr-psdemo | Select-Object -Property FunctionName,Runtime,MemorySize,Timeout,CodeSize,LastModified,RoleName | Export-Csv -Path ("AWS_Report_Lambda_Functions_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv") -NoTypeInformation;
+Get-LMFunctionList -ProfileName engr-psdemo | Select-Object -Property FunctionName,Runtime,MemorySize,Timeout,CodeSize,LastModified,Role | Export-Csv -Path ("AWS_Report_Lambda_Functions_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv") -NoTypeInformation;
 
 #Display Lambda Functions
-Get-LMFunctionList -ProfileName engr-psdemo | Select-Object -Property FunctionName,Runtime,MemorySize,Timeout,CodeSize,LastModified,RoleName | Format-Table -AutoSize
+Get-LMFunctionList -ProfileName engr-psdemo | Select-Object -Property FunctionName,Runtime,MemorySize,Timeout,CodeSize,LastModified,Role | Format-Table -AutoSize
 
 #Download Zip File of Related Code for Lambda Functions
 Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-psdemo | Foreach-Object { 
