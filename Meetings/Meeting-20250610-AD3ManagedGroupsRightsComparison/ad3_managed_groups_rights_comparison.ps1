@@ -254,7 +254,7 @@ if($htBUGuids.Count -gt 0)
                                             GroupLink  = "https://admin.uinform.ucdavis.edu/GroupManagement/Details/" + $deBUMngdGrp.Guid.ToString()
                                           };
             
-            #Add Custom Object to Reporting Array
+            # Add Custom Object to Reporting Array
             $arrRptMngGrpsMissingRights += $cstMngGrp;
 
         }#End of Null Check on No Access Rights Group
