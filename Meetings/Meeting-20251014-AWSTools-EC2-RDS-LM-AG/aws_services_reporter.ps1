@@ -104,9 +104,11 @@ Get-AGRestAPIList -ProfileName $awsProfile | Foreach-Object { Get-AGResourceList
 #Display API Gateway APIs
 Get-AGRestAPIList -ProfileName $awsProfile | Foreach-Object { Get-AGResourceList -RestApiId $_.Id -ProfileName $awsProfile } | Format-Table  
 
+#Export S3 Bucket List
+Get-S3Bucket -ProfileName $awsProfile | Select-Object -Property BucketName,BucketArn,BucketRegion,CreationDate | Export-Csv -Path ("AWS_Report_S3_Buckets_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv") -NoTypeInformation;
 
-
-
+#Display S3 Bucket List
+Get-S3Bucket -ProfileName $awsProfile | Select-Object -Property BucketName,BucketArn,BucketRegion,CreationDate | Format-Table -AutoSize
 
 
 
