@@ -12,7 +12,7 @@ Part two of the AWS Tools for PowerShell series. Covering working with EC2, RDS,
 
 [Installed AWS Tools for PowerShell on AWS CloudShell](https://docs.aws.amazon.com/powershell/v5/userguide/pstools-getting-set-up-cloudshell.html)
 
-### Commands
+### General Commands
 
 Setting Default AWS Region for Session
 ```powershell
@@ -23,6 +23,8 @@ View Configured AWS Credentials Profiles
 ```powershell
 Get-AWSCredential -ListProfileDetail;
 ```
+
+### EC2 Commands
 
 View All AWS EC2 Module Commands
 ```powershell
@@ -84,6 +86,8 @@ $cstEC2Vol = [PSCustomObject]@{
 $cstEC2Vol | Select-Object -Property VolumeID,IOEnabled,IOPerformance,InitializationState } | Format-Table -AutoSize
 ```
 
+### RDS Commands
+
 View All AWS RDS Module Commands
 ```powershell
 Get-Command -Module AWS.Tools.RDS
@@ -128,6 +132,8 @@ View RDS DB Snapshots
 Get-RDSDBSnapshot -ProfileName engr-psdemo | Select-Object -Property DBInstanceIdentifier,DBSnapshotIdentifier,Engine,EngineVersion,SnapshotCreateTime,SnapshotType | Format-Table -AutoSize
 ```
 
+### Lambda Commands
+
 View All Lambda Module Commands
 ```powershell
 Get-Command -Module AWS.Tools.Lambda
@@ -162,6 +168,8 @@ Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-p
 		}
 }
 ```
+
+### API Gateway Commands
 
 View All AWS API Gateway Module Commands
 ```powershell

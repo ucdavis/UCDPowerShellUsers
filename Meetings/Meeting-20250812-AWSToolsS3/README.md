@@ -1,6 +1,6 @@
 ## AWS Tools for PowerShell and S3
 
-Installing the AWS Tools for PowerShell and working with S3 data. 
+Installing the AWS Tools for PowerShell and working with the S3 module. 
 
 ### Resource Links
 
@@ -12,7 +12,7 @@ Installing the AWS Tools for PowerShell and working with S3 data.
 
 [Installed AWS Tools for PowerShell on AWS CloudShell](https://docs.aws.amazon.com/powershell/v5/userguide/pstools-getting-set-up-cloudshell.html)
 
-### Commands
+### General Commands
 
 Install AWS Tools Installer Module
 ```powershell
@@ -86,6 +86,8 @@ Get List of AWS Credentials
 ```powershell
 Get-AWSCredential -ListProfileDetail; 
 ```
+
+### S3 Commands
 
 View S3 Buckets 
 ```powershell

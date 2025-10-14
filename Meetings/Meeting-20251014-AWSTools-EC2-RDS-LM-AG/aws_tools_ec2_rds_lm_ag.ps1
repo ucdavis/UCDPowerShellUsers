@@ -1,7 +1,7 @@
 <#
     Title: aws_tools_ec2_rds_lm_ag.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2025-10-10
+    Last Edit: 2025-10-14
 #>
 
 #Stopping an Accidental Run
@@ -12,6 +12,10 @@ Set-DefaultAWSRegion -Region us-west-2;
 
 #View Configured AWS Credentials Profiles
 Get-AWSCredential -ListProfileDetail; 
+
+#############################
+# EC2
+#############################
 
 #View All AWS EC2 Module Commands
 Get-Command -Module AWS.Tools.EC2 
@@ -57,6 +61,9 @@ $cstEC2Vol = [PSCustomObject]@{
 				
 $cstEC2Vol | Select-Object -Property VolumeID,IOEnabled,IOPerformance,InitializationState } | Format-Table -AutoSize
 
+#############################
+# RDS
+#############################
 
 #View All AWS RDS Module Commands
 Get-Command -Module AWS.Tools.RDS
@@ -93,6 +100,9 @@ $cstRDS | Select-Object -Property DBIdentifier,DBInstanceStatus,DBInstanceClass,
 #View RDS DB Snapshots
 Get-RDSDBSnapshot -ProfileName engr-psdemo | Select-Object -Property DBInstanceIdentifier,DBSnapshotIdentifier,Engine,EngineVersion,SnapshotCreateTime,SnapshotType | Format-Table -AutoSize
 
+#############################
+# Lambda
+#############################
 
 #View All AWS Lambda Module Commands
 Get-Command -Module AWS.Tools.Lambda 
@@ -117,6 +127,9 @@ Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-p
 		}
 }
 
+#############################
+# API Gateway
+#############################
 
 #View All AWS API Gateway Module Commands
 Get-Command -Module AWS.Tools.APIGateway

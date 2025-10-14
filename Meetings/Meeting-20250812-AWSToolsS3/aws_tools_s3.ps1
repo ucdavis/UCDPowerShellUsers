@@ -1,7 +1,7 @@
 <#
     Title: aws_tools_s3.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2025-10-09
+    Last Edit: 2025-10-14
 #>
 
 #Stopping an Accidental Run
@@ -52,6 +52,13 @@ Set-AWSCredential -AccessKey BIGACCESSKEYSTRING -SecretKey VeryLongSecretKey -St
 
 #Get List of AWS Credentials
 Get-AWSCredential -ListProfileDetail; 
+
+##############################
+# S3
+##############################
+
+#View All AWS S3 Module Commands
+Get-Command -Module AWS.Tools.S3
 
 #View S3 Buckets
 Get-S3Bucket -ProfileName engr-psdemo;

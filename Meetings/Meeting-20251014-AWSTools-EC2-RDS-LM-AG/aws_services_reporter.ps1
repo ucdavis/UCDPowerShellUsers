@@ -1,11 +1,14 @@
 <#
     Title: aws_services_reporter.ps1
     Authors: Dean Bunn and Ben Clark
-    Last Edit: 2025-10-13
+    Last Edit: 2025-10-14
 #>
 
 #Setting Default AWS Region for Session
 Set-DefaultAWSRegion -Region us-west-2;
+
+#Var for AWS Profile Name
+[string]$awsProfile = "engr-psdemo";
 
 #Array for EC2 Instance Reporting
 $arrEC2Reporter = @();
@@ -17,7 +20,7 @@ $arrEC2VolumeRptr = @();
 $arrRDSReporter = @();
 
 #Report EC2 Status
-Get-EC2Instance -ProfileName engr-psdemo | ForEach-Object { 
+Get-EC2Instance -ProfileName $awsProfile | ForEach-Object { 
 $cstEC2 = [PSCustomObject]@{
                              Name              =  ($_.Instances.Tags | Where-Object {$_.Key -eq "Name"}).Value
                              InstanceID        =  $_.Instances.InstanceId
@@ -42,7 +45,7 @@ $arrEC2Reporter | Select-Object -Property Name,InstanceType,InstanceID,State,Pri
 $arrEC2Reporter | Select-Object -Property Name,InstanceType,InstanceID,State,PrivateIPAddress,PublicIPAddress,SubnetID,VpcID,Platform | Format-Table -AutoSize
 
 #Report EC2 Volume Information
-Get-EC2VolumeStatus -ProfileName engr-psdemo | Foreach-Object { 
+Get-EC2VolumeStatus -ProfileName $awsProfile | Foreach-Object { 
 $cstEC2Vol = [PSCustomObject]@{
 				                VolumeID            = $_.VolumeId
 				                IOEnabled           = ($_.VolumeStatus.Details | Where-Object {$_.Name -eq "io-enabled"}).Status
@@ -59,7 +62,7 @@ $arrEC2VolumeRptr | Select-Object -Property VolumeID,IOEnabled,IOPerformance,Ini
 #Display EC2 Volume Information to Console
 $arrEC2VolumeRptr | Select-Object -Property VolumeID,IOEnabled,IOPerformance,InitializationState | Format-Table -AutoSize
 
-Get-RDSDBInstance -ProfileName engr-psdemo | Foreach-Object { 
+Get-RDSDBInstance -ProfileName $awsProfile | Foreach-Object { 
 $cstRDS = [PSCustomObject]@{
                 		     DBIdentifier  	      = $_.DBInstanceIdentifier
                 		     DBInstanceStatus     = $_.DBInstanceStatus
@@ -82,13 +85,13 @@ $arrRDSReporter | Select-Object -Property DBIdentifier,DBInstanceStatus,DBInstan
 $arrRDSReporter | Select-Object -Property DBIdentifier,DBInstanceStatus,DBInstanceClass,Engine,EngineVersion,LatestRestorableTime,PubliclyAccessible,EndPointAddress,EndPointPort | Format-Table -AutoSize
 
 #Export Lambda Function Basic Information to CSV
-Get-LMFunctionList -ProfileName engr-psdemo | Select-Object -Property FunctionName,Runtime,MemorySize,Timeout,CodeSize,LastModified,Role | Export-Csv -Path ("AWS_Report_Lambda_Functions_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv") -NoTypeInformation;
+Get-LMFunctionList -ProfileName $awsProfile | Select-Object -Property FunctionName,Runtime,MemorySize,Timeout,CodeSize,LastModified,Role | Export-Csv -Path ("AWS_Report_Lambda_Functions_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv") -NoTypeInformation;
 
 #Display Lambda Functions
-Get-LMFunctionList -ProfileName engr-psdemo | Select-Object -Property FunctionName,Runtime,MemorySize,Timeout,CodeSize,LastModified,Role | Format-Table -AutoSize
+Get-LMFunctionList -ProfileName $awsProfile | Select-Object -Property FunctionName,Runtime,MemorySize,Timeout,CodeSize,LastModified,Role | Format-Table -AutoSize
 
 #Download Zip File of Related Code for Lambda Functions
-Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-psdemo | Foreach-Object { 
+Get-LMFunctionList -ProfileName $awsProfile | Get-LMFunction -ProfileName $awsProfile | Foreach-Object { 
 		if([string]::IsNullOrEmpty($_.Code.Location) -eq $false)
 		{
 		    Invoke-RestMethod -Uri $_.Code.Location -OutFile ($_.Configuration.FunctionName + ".zip")
@@ -96,10 +99,10 @@ Get-LMFunctionList -ProfileName engr-psdemo | Get-LMFunction -ProfileName engr-p
 }
 
 #Export API Gateway APIs
-Get-AGRestAPIList -ProfileName engr-psdemo | Foreach-Object { Get-AGResourceList -RestApiId $_.Id -ProfileName engr-psdemo } | Select-Object -Property Id,ParentId,Path,PathPart | Export-Csv -Path ("AWS_Report_API_Gateway_APIs_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv") -NoTypeInformation;
+Get-AGRestAPIList -ProfileName $awsProfile | Foreach-Object { Get-AGResourceList -RestApiId $_.Id -ProfileName $awsProfile } | Select-Object -Property Id,ParentId,Path,PathPart | Export-Csv -Path ("AWS_Report_API_Gateway_APIs_" + (Get-Date).ToString("yyyy-MM-dd-HH-mm") + ".csv") -NoTypeInformation;
 
 #Display API Gateway APIs
-Get-AGRestAPIList -ProfileName engr-psdemo | Foreach-Object { Get-AGResourceList -RestApiId $_.Id -ProfileName engr-psdemo } | Format-Table  
+Get-AGRestAPIList -ProfileName $awsProfile | Foreach-Object { Get-AGResourceList -RestApiId $_.Id -ProfileName $awsProfile } | Format-Table  
 
 
 
