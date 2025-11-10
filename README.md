@@ -2,6 +2,7 @@
 
 ### Meetings
 
+- [2025-11-11 Microsoft Graph Users and Groups](Meetings/Meeting-20251111-MicrosoftGraphUsersGroups)
 - [2025-10-14 AWS Tools EC2, RDS, Lambda, and API Gateway](Meetings/Meeting-20251014-AWSTools-EC2-RDS-LM-AG)
 - [2025-09-09 Microsoft Graph SDK Setup](Meetings/Meeting-20250909-MicrosoftGraphSDKSetup)
 - [2025-08-12 AWS Tools and S3](Meetings/Meeting-20250812-AWSToolsS3)
