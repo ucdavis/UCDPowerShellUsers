@@ -16,11 +16,11 @@ Install-Module -Name Microsoft.Graph.Authentication,
 #View Installed Modules
 Get-InstalledModule
 
-#View Available Commands in a Module
-Get-Command -Module Microsoft.Graph.Users
-
 #Import Required Modules
 Import-Module Microsoft.Graph.Authentication,Microsoft.Graph.Users,Microsoft.Graph.Groups,Microsoft.Graph.DeviceManagement
+
+#View Available Commands in a Module
+Get-Command -Module Microsoft.Graph.Users
 
 #Connect to Microsoft Graph
 Connect-MgGraph
