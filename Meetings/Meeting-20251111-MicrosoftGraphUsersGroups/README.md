@@ -2,6 +2,21 @@
 
 Part 2 of series on Microsoft Graph PowerShell SDK usage. This session will cover querying users and groups.
 
+### Resource Links
+
+[Microsoft Azure Portal](https://portal.azure.com/#allservices)
+
+[Microsoft Intune Admin Center](https://intune.microsoft.com/#home)
+
+[Microsoft.Graph.Users Module](https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.users)
+
+[Microsoft.Graph.Groups Module](https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.groups)
+
+[Microsoft Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)
+
+[Intune / Entra Terminology UCD KB](https://kb.ucdavis.edu/?id=10695)
+
+
 ### Module Installation Commands
 Install Required Modules
 ```powershell

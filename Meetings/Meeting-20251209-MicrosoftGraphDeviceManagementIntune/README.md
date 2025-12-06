@@ -10,6 +10,8 @@ Part 3 of series on Microsoft Graph PowerShell SDK usage. This session will cove
 
 [Microsoft.Graph.DeviceManagement Module](https://learn.microsoft.com/en-us/powershell/module/microsoft.graph.devicemanagement)
 
+[Microsoft Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)
+
 [Intune / Entra Terminology UCD KB](https://kb.ucdavis.edu/?id=10695)
 
 
