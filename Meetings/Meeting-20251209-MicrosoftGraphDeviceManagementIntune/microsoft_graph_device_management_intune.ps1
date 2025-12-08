@@ -11,14 +11,13 @@ Exit;
 Install-Module -Name Microsoft.Graph.Authentication,
                      Microsoft.Graph.Users,
                      Microsoft.Graph.Groups,
-                     Microsoft.Graph.DeviceManagement,
-                     Microsoft.Graph.Identity.DirectoryManagement -Scope CurrentUser -Repository PSGallery -Force
+                     Microsoft.Graph.DeviceManagement -Scope CurrentUser -Repository PSGallery -Force
 
 #View Installed Modules
 Get-InstalledModule
 
 #Import Required Modules
-Import-Module Microsoft.Graph.Authentication,Microsoft.Graph.Users,Microsoft.Graph.Groups,Microsoft.Graph.Identity.DirectoryManagement,Microsoft.Graph.DeviceManagement
+Import-Module Microsoft.Graph.Authentication,Microsoft.Graph.Users,Microsoft.Graph.Groups,Microsoft.Graph.DeviceManagement
 
 #View Available Commands in a Module
 Get-Command -Module Microsoft.Graph.DeviceManagement
@@ -47,8 +46,8 @@ Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" | Form
 Get-MgDeviceManagementManagedDevice -Filter "startswith(deviceName,'coe-')" | Format-Table -AutoSize
 
 #View Managed Devices Contains Specific Term in Device Name
-Get-MgDeviceManagementManagedDevice -Filter "contains(deviceName,'LAB')" -All | `
-Select-Object -Property Id,DeviceName,SerialNumber,UserDisplayName,OperatingSystem,AzureAdRegistered,LastSyncDateTime | Format-Table -AutoSize
+Get-MgDeviceManagementManagedDevice -Filter "contains(deviceName,'LAB')" -All `
+ | Select-Object -Property Id,DeviceName,SerialNumber,UserDisplayName,OperatingSystem,AzureAdRegistered,LastSyncDateTime | Format-Table -AutoSize
 
 #View All Detected Apps
 Get-MgDeviceManagementDetectedApp -All 
@@ -73,19 +72,18 @@ Foreach-Object { Write-output "$([Environment]::NewLine)=================="; `
 Get-MgDeviceManagementDeviceCompliancePolicyDeviceStateSummary
 
 #View Device Windows Protection State
-Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" | `
- Foreach-Object {  Get-MgDeviceManagementManagedDeviceWindowsProtectionState -ManagedDeviceId $_.Id }  | Format-List
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" `
+ | Foreach-Object {  Get-MgDeviceManagementManagedDeviceWindowsProtectionState -ManagedDeviceId $_.Id }  | Format-List
 
 #View Device Configuration State
-Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'LS-250184-LDO'" | `
- Foreach-Object {  Get-MgDeviceManagementManagedDeviceConfigurationState -ManagedDeviceId $_.Id }  | Format-Table -AutoSize
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'LS-250184-LDO'" `
+  | Foreach-Object {  Get-MgDeviceManagementManagedDeviceConfigurationState -ManagedDeviceId $_.Id }  | Format-Table -AutoSize
 
 #View Managed Device User
-Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" | `
- Foreach-Object {  Get-MgDeviceManagementManagedDeviceUser -ManagedDeviceId $_.Id }  | Format-Table -AutoSize
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" `
+  | Foreach-Object {  Get-MgDeviceManagementManagedDeviceUser -ManagedDeviceId $_.Id } | Format-Table -AutoSize
 
+#View Non Compliant Managed Devices and their Users
+Get-MgDeviceManagementManagedDevice -Filter "startswith(deviceName,'coe-') and ComplianceState eq 'noncompliant'" `
+ | Select-Object ComplianceState,DeviceName,DeviceEnrollmentType,EmailAddress
 
-
-
-#View Device's Group Membership
-Get-MgDeviceMemberOf -DeviceId (Get-MgDevice -Filter "displayName eq 'COE-J238H03'").Id | Foreach-Object { Get-MgGroup -GroupId $_.Id }

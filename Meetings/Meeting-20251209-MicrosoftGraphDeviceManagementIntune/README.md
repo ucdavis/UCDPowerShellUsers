@@ -45,7 +45,79 @@ Disconnect Microsoft Graph Session
 Disconnect-MgGraph
 ```
 
-### Device Commands
-
-
-
+### Device Management Commands
+View All Commands Related to Managed Devices in Device Management Module
+```powershell
+Get-Help -Name MgDeviceManagementManagedDevice | Select-Object -Property Name,Synopsis | Format-Table -AutoSize
+```
+View Managed Devices (View Only First 10)
+```powershell
+Get-MgDeviceManagementManagedDevice -Top 10
+```
+View All Managed Devices
+```powershell
+Get-MgDeviceManagementManagedDevice -All
+```
+View Managed Device by ID
+```powershell
+Get-MgDeviceManagementManagedDevice -ManagedDeviceId "76342a17-8e24-4cfc-a7ee-ddd939d92076" | Format-List
+```
+View Managed Device by Device Name
+```powershell
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" | Format-List
+```
+View Managed Devices with Name that Starts with Specific Characters
+```powershell
+Get-MgDeviceManagementManagedDevice -Filter "startswith(deviceName,'coe-')" | Format-Table -AutoSize
+```
+View Managed Devices Contains Specific Term in Device Name
+```powershell
+Get-MgDeviceManagementManagedDevice -Filter "contains(deviceName,'LAB')" -All `
+ | Select-Object -Property Id,DeviceName,SerialNumber,UserDisplayName,OperatingSystem,AzureAdRegistered,LastSyncDateTime | Format-Table -AutoSize
+```
+View All Detected Apps
+```powershell
+Get-MgDeviceManagementDetectedApp -All
+```
+View Detected App by Name and Ordered by Device Count
+```powershell
+Get-MgDeviceManagementDetectedApp -Filter "startswith(displayName,'Adobe')" -All | Sort-Object DeviceCount -Descending | Format-Table -AutoSize
+```
+View Systems with Detected App by App ID
+```powershell
+Get-MgDeviceManagementDetectedAppManagedDevice -DetectedAppId "0000e748dbcd48f12a0748524b02166e289200000000" `
+   | Select-Object Id,DeviceName,OperatingSystem,OSVersion,DeviceRegistrationState,EmailAddress | Format-Table -AutoSize
+```
+View Device Configuration Polices
+```powershell
+Get-MgDeviceManagementDeviceConfiguration | `
+  Foreach-Object { Write-output "$([Environment]::NewLine)=================="; `
+                 $_.DisplayName; `
+                 Write-Output "==================$([Environment]::NewLine)"; `
+                 $_.AdditionalProperties; `
+                 Write-output "$([Environment]::NewLine)";}
+```
+View Device Compliance Policy State Summary
+```powershell
+Get-MgDeviceManagementDeviceCompliancePolicyDeviceStateSummary
+```
+View Device Windows Protection State
+```powershell
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" `
+ | Foreach-Object {  Get-MgDeviceManagementManagedDeviceWindowsProtectionState -ManagedDeviceId $_.Id }  | Format-List
+```
+View Device Configuration State
+```powershell
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'LS-250184-LDO'" `
+ | Foreach-Object {  Get-MgDeviceManagementManagedDeviceConfigurationState -ManagedDeviceId $_.Id }  | Format-Table -AutoSize
+```
+View Managed Device User
+```powershell
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" `
+ | Foreach-Object {  Get-MgDeviceManagementManagedDeviceUser -ManagedDeviceId $_.Id }  | Format-Table -AutoSize
+```
+View Non Compliant Managed Devices and their Users
+```powershell
+Get-MgDeviceManagementManagedDevice -Filter "startswith(deviceName,'coe-') and ComplianceState eq 'noncompliant'" `
+ | Select-Object ComplianceState,DeviceName,DeviceEnrollmentType,EmailAddress
+```
