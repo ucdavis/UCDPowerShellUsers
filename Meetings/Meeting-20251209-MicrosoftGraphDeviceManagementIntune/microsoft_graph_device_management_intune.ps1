@@ -46,12 +46,44 @@ Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" | Form
 #View Managed Devices with Name that Starts with Specific Characters
 Get-MgDeviceManagementManagedDevice -Filter "startswith(deviceName,'coe-')" | Format-Table -AutoSize
 
+#View Managed Devices Contains Specific Term in Device Name
+Get-MgDeviceManagementManagedDevice -Filter "contains(deviceName,'LAB')" -All | `
+Select-Object -Property Id,DeviceName,SerialNumber,UserDisplayName,OperatingSystem,AzureAdRegistered,LastSyncDateTime | Format-Table -AutoSize
+
+#View All Detected Apps
+Get-MgDeviceManagementDetectedApp -All 
+
 #View Detected App by Name and Ordered by Device Count
 Get-MgDeviceManagementDetectedApp -Filter "startswith(displayName,'Adobe')" -All | Sort-Object DeviceCount -Descending | Format-Table -AutoSize
 
 #View Systems with Detected App by App ID
 Get-MgDeviceManagementDetectedAppManagedDevice -DetectedAppId "0000e748dbcd48f12a0748524b02166e289200000000" `
    | Select-Object Id,DeviceName,OperatingSystem,OSVersion,DeviceRegistrationState,EmailAddress | Format-Table -AutoSize
+
+#View Device Configuration Polices
+Get-MgDeviceManagementDeviceConfiguration | `
+Foreach-Object { Write-output "$([Environment]::NewLine)=================="; `
+                 $_.DisplayName; `
+                 Write-Output "==================$([Environment]::NewLine)"; `
+                 $_.AdditionalProperties; `
+                 Write-output "$([Environment]::NewLine)";}
+
+
+#View Device Compliance Policy State Summary
+Get-MgDeviceManagementDeviceCompliancePolicyDeviceStateSummary
+
+#View Device Windows Protection State
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" | `
+ Foreach-Object {  Get-MgDeviceManagementManagedDeviceWindowsProtectionState -ManagedDeviceId $_.Id }  | Format-List
+
+#View Device Configuration State
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'LS-250184-LDO'" | `
+ Foreach-Object {  Get-MgDeviceManagementManagedDeviceConfigurationState -ManagedDeviceId $_.Id }  | Format-Table -AutoSize
+
+#View Managed Device User
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" | `
+ Foreach-Object {  Get-MgDeviceManagementManagedDeviceUser -ManagedDeviceId $_.Id }  | Format-Table -AutoSize
+
 
 
 
