@@ -37,7 +37,7 @@ Get-MgDeviceManagementManagedDevice -Top 10 # View Only First 10
 # Get-MgDeviceManagementManagedDevice -All
 
 #View Managed Device by ID
-Get-MgDeviceManagementManagedDevice -ManagedDeviceId "76342a17-8e24-4cfc-a7ee-ddd939d92076" | Format-List
+Get-MgDeviceManagementManagedDevice -ManagedDeviceId "0f121f24-032f-4d8b-bb40-3536b0be0fa1" | Format-List
 
 #View Managed Device by Device Name
 Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" | Format-List
