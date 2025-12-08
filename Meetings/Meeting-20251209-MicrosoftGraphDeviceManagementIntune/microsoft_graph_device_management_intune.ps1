@@ -40,10 +40,18 @@ Get-MgDeviceManagementManagedDevice -Top 10 # View Only First 10
 #View Managed Device by ID
 Get-MgDeviceManagementManagedDevice -ManagedDeviceId "76342a17-8e24-4cfc-a7ee-ddd939d92076" | Format-List
 
+#View Managed Device by Device Name
+Get-MgDeviceManagementManagedDevice -Filter "deviceName eq 'COE-583QRF4'" | Format-List
+
 #View Managed Devices with Name that Starts with Specific Characters
 Get-MgDeviceManagementManagedDevice -Filter "startswith(deviceName,'coe-')" | Format-Table -AutoSize
 
+#View Detected App by Name and Ordered by Device Count
+Get-MgDeviceManagementDetectedApp -Filter "startswith(displayName,'Adobe')" -All | Sort-Object DeviceCount -Descending | Format-Table -AutoSize
 
+#View Systems with Detected App by App ID
+Get-MgDeviceManagementDetectedAppManagedDevice -DetectedAppId "0000e748dbcd48f12a0748524b02166e289200000000" `
+   | Select-Object Id,DeviceName,OperatingSystem,OSVersion,DeviceRegistrationState,EmailAddress | Format-Table -AutoSize
 
 
 
