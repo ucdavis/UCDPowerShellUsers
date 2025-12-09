@@ -2,6 +2,14 @@
 
 Part 3 of series on Microsoft Graph PowerShell SDK usage. This session will cover device management (Intune).
 
+### Difference between MgDevice and MgDeviceManagementManagedDevice
+
+> The cmdlets Get-MgDevice and Get-MgDeviceManagementManagedDevice both retrieve device information from Microsoft Graph, but they access different data sources and provide different levels of detail.
+
+> Get-MgDevice: This cmdlet retrieves device objects from Microsoft Entra ID (formerly Azure Active Directory). It focuses on the directory object representation of a device within Entra ID, including properties like DisplayName, DeviceId, TrustType, and OperatingSystem. This cmdlet is useful for managing device identities within your Entra ID tenant and for tasks related to device registration and authentication.
+
+> Get-MgDeviceManagementManagedDevice: This cmdlet retrieves managed device objects from Microsoft Intune. It provides more comprehensive information about devices enrolled and managed by Intune, including details specific to device management, such as SerialNumber, ComplianceState, LastSyncDateTime, ManagementAgent, and various device-specific properties related to operating system and hardware. This cmdlet is essential for tasks related to device compliance, configuration, and inventory within an Intune environment.
+
 ### Resource Links
 
 [Microsoft Azure Portal](https://portal.azure.com/#allservices)
@@ -13,7 +21,6 @@ Part 3 of series on Microsoft Graph PowerShell SDK usage. This session will cove
 [Microsoft Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)
 
 [Intune / Entra Terminology UCD KB](https://kb.ucdavis.edu/?id=10695)
-
 
 ### Module Installation Commands
 Install Required Modules
