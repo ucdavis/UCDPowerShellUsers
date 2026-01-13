@@ -63,7 +63,6 @@ Get-MgContact -Filter "proxyAddresses/any(p:startswith(p,'SMTP:engr'))" -Consist
 #Find All Contacts from a Specific Domain
 Get-MgContact -Filter "proxyAddresses/any(p:endswith(p,'@hotmail.com'))" -ConsistencyLevel eventual -All
 
-
 # Any Expression Format
 # any(x: x eq 'value')
 #     ^  ^
@@ -71,22 +70,52 @@ Get-MgContact -Filter "proxyAddresses/any(p:endswith(p,'@hotmail.com'))" -Consis
 #     |  └─ reference to the current element
 #     └──── variable declaration
 #
-# Filter Format Using Any Expression
+# Filter Format Using Any Expression 
 # collection/any(x:x eq 'value')
 # collection/any(x:startswith(x,'value'))
 # collection/any(x:endswith(x,'value'))
+#
+# Works Only on Properties that are Collections
 
+#Retrieve All Devices
+Get-MgDevice -ConsistencyLevel eventual -All
 
+#Get Devices with a Specific Naming Structure
+Get-MgDevice -Filter "startswith(displayName,'coe-mae-')" -ConsistencyLevel eventual -All | `
+ Select-Object Id,DisplayName,OperatingSystem,OperatingSystemVersion,TrustType,IsManaged,IsCompliant,RegistrationDateTime,ApproximateLastSignInDateTime | `
+ Format-Table -AutoSize
 
+#Get Devices with a Specific Naming Prefix and have Signed In within the Last Two Months
+Get-MgDevice -Filter "startswith(displayName,'coe-mae-')" -ConsistencyLevel eventual -All | `
+ Where-Object { $_.ApproximateLastSignInDateTime -ge (Get-Date).AddMonths(-2) } | `
+ Select-Object Id,DisplayName,ApproximateLastSignInDateTime | Format-Table -AutoSize
 
+#The Returned "Id" is the "DeviceID" when Querying for Systems. 
 
+#Get Individual Device Information by "DeviceId" which is Really "Id"
+Get-MgDevice -DeviceId "3229f204-e0a3-47e5-8231-8d22d762f718" | Format-List
 
+#Get Individual Device Information by Actual DeviceId 
+Get-MgDeviceByDeviceId -DeviceId "22d1b65f-a7e7-4ef1-993a-c84b10b0bd18" | Format-List
 
+#Get Individual Device Membership
+Get-MgDeviceMemberOf -DeviceId "db555ea7-69dc-4cda-8563-66505a2f4b8d" | Foreach-Object { $_.AdditionalProperties; write-output "`n`n"; }
+#Or by Device Display Name
+Get-MgDeviceMemberOf -DeviceId (Get-MgDevice -Filter "displayName eq 'COE-J238H03'").Id | Foreach-Object { $_.AdditionalProperties; write-output "`n`n"; }
 
+#Retrieve Registered Owner of Device
+Get-MgDeviceRegisteredOwner -DeviceId "db555ea7-69dc-4cda-8563-66505a2f4b8d" | Foreach-Object { $_.AdditionalProperties; }
+#Or by Device Display Name 
+Get-MgDeviceRegisteredOwner -DeviceId (Get-MgDevice -Filter "displayName eq 'COE-J238H03'").Id | Foreach-Object { $_.AdditionalProperties; }
 
+#Retrieve Registered User of Device
+Get-MgDeviceRegisteredUser -DeviceId "db555ea7-69dc-4cda-8563-66505a2f4b8d" | Foreach-Object { $_.AdditionalProperties; }
+#Or
+Get-MgDeviceRegisteredUser -DeviceId (Get-MgDevice -Filter "displayName eq 'COE-J238H03'").Id | Foreach-Object { $_.AdditionalProperties; }
 
+#Get Individual Device Membership Expanded Rules
+Get-MgDeviceMemberOf -DeviceId "db555ea7-69dc-4cda-8563-66505a2f4b8d" | `
+    Foreach-Object { foreach($ap in $_.AdditionalProperties) {
+        
 
-
-
-#View Device's Group Membership
-Get-MgDeviceMemberOf -DeviceId (Get-MgDevice -Filter "displayName eq 'COE-J238H03'").Id | Foreach-Object { Get-MgGroup -GroupId $_.Id }
+} }
