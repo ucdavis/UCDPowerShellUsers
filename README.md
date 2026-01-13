@@ -2,6 +2,7 @@
 
 ### Meetings
 
+- [2026-01-13 Microsoft Graph Directory Management](Meetings/Meeting-20260113-MicrosoftGraphDirectoryManagement)
 - [2025-12-09 Microsoft Graph Device Management (Intune)](Meetings/Meeting-20251209-MicrosoftGraphDeviceManagementIntune)
 - [2025-11-11 Microsoft Graph Users and Groups](Meetings/Meeting-20251111-MicrosoftGraphUsersGroups)
 - [2025-10-14 AWS Tools EC2, RDS, Lambda, and API Gateway](Meetings/Meeting-20251014-AWSTools-EC2-RDS-LM-AG)

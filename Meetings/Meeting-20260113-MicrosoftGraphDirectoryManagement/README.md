@@ -1,4 +1,4 @@
-## Micrsoft Graph Device Management (Intune)
+## Micrsoft Graph Directory Management
 
 Part 4 of series on Microsoft Graph PowerShell SDK usage. This session will cover directory management module.
 
