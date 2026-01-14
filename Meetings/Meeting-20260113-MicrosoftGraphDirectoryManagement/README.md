@@ -27,7 +27,7 @@ Get-InstalledModule
 ```
 View Available Commands in a Module
 ```powershell
-Get-Command -Module Microsoft.Graph.DeviceManagement
+Get-Command -Module Microsoft.Graph.Identity.DirectoryManagement
 ```
 ### Module Import and Connection Commands
 Import Required Modules
@@ -151,4 +151,18 @@ Retrieve Registered User of Device
 Get-MgDeviceRegisteredUser -DeviceId "db555ea7-69dc-4cda-8563-66505a2f4b8d" | Foreach-Object { $_.AdditionalProperties; }
 #Or
 Get-MgDeviceRegisteredUser -DeviceId (Get-MgDevice -Filter "displayName eq 'COE-J238H03'").Id | Foreach-Object { $_.AdditionalProperties; }
+```
+Get Individual Device Membership Expanded Rules and Group Info
+```powershell
+Get-MgDeviceMemberOf -DeviceId "db555ea7-69dc-4cda-8563-66505a2f4b8d" | `
+    Foreach-Object { foreach($ap in $_.AdditionalProperties) {
+                       if($ap['@odata.type'].ToString().Contains("microsoft.graph.group"))
+                       {    
+                            #Var for Group Filter 
+                            [string]$grpFilter = "displayName eq '" + $ap['displayName'] + "'";
+
+                            #Pull Group by Display Name 
+                            Get-MgGroup -Filter $grpFilter | Select-Object Id,DisplayName,MembershipRule
+                       }
+} } | Format-Table -AutoSize -Wrap
 ```
